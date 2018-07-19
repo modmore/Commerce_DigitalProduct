@@ -1,0 +1,47 @@
+<div class="horizontal field {% if field.hasErrors() %}error{% endif %}">
+    <!-- <label for="{{ field.key }}-{{ field.name }}-resource">{{ field.label }}</label> -->
+    {% set idx = 0 %}
+    {% for item in field.getValueAsArray() %}
+        {% if idx == 0 %}
+            <h4 class="ui header">{{ lex('commerce_digitalproduct.existing_files') }}</h4>
+        {% endif %}
+
+        <div class="two fields">
+            <div class="field">
+                {# Makes label only appear before first row, can be taken out if needed. #}
+                {% if idx == 0 %}
+                    <label for="{{ field.key }}-{{ field.name }}-display_name-{{ idx }}">{{ lex('commerce_digitalproduct.resource_display_name') }}</label>
+                {% endif %}
+                <input id="{{ field.key }}-{{ field.name }}-display_name-{{ idx }}" name="{{ field.name }}[{{ idx }}][display_name]" type="text" value="{{ item.display_name }}">
+            </div>
+            <div class="field">
+                {% if idx == 0 %}
+                    <label for="{{ field.key }}-{{ field.name }}-url-{{ idx }}">{{ lex('commerce_digitalproduct.url') }}</label>
+                {% endif %}
+                <input id="{{ field.key }}-{{ field.name }}-url-{{ idx }}" name="{{ field.name }}[{{ idx }}][url]" type="text" value="{{ item.url }}">
+            </div>
+        </div>
+        {% set idx = idx + 1 %}
+    {% endfor %}
+
+    {# This can be changed if you want more then 1 field appearing at once to add more resources. #}
+    {% for i in 1..1 %}
+        <h4 class="ui header">{{ lex('commerce_digitalproduct.add_file') }}</h4>
+        <div class="two fields">
+            <div class="field">
+                <label for="{{ field.key }}-{{ field.name }}-display_name-{{ idx + i }}">{{ lex('commerce_digitalproduct.resource_display_name') }}</label>
+                <input id="{{ field.key }}-{{ field.name }}-display_name-{{ idx + i }}" name="{{ field.name }}[{{ idx + i }}][display_name]" type="text">
+            </div>
+            <div class="field">
+                <label for="{{ field.key }}-{{ field.name }}-resource-{{ idx + i }}">{{ lex('commerce_digitalproduct.url') }}</label>
+                <input id="{{ field.key }}-{{ field.name }}-resource-{{ idx + i }}" name="{{ field.name }}[{{ idx + i }}][url]" type="text">
+            </div>
+        </div>
+    {% endfor %}
+
+    {% if field.description %}
+        <p class="help">{{ field.description }}</p>
+    {% endif %}
+
+    {% include "admin/widgets/fields/_errors.twig" %}
+</div>

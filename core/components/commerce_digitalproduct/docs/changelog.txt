@@ -1,0 +1,4 @@
+++ Digitalproduct for Commerc
+++ Released on 7/19/2018
+++++++++++++++++++++++++++
+- First dev release

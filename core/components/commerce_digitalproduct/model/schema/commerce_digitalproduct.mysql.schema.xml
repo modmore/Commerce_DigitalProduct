@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<model package="commerce_digitalproduct" baseClass="comSimpleObject" platform="mysql" defaultEngine="MyISAM" version="1.1">
+    <object class="DigitalproductProduct" extends="comProduct" />
+    <object class="DigitalproductOrderShipment" extends="comOrderShipment" />
+
+    <!-- Table for tracking digital products -->
+    <object class="Digitalproduct" table="commerce_digitalproduct" extends="comSimpleObject">
+        <field key="order" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" default="0" />
+        <field key="product" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" default="0" />
+        <field key="user" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" default="0" />
+        <!-- Used in URLs for tracking and viewing -->
+        <field key="secret" dbtype="varchar" precision="190" phptype="string" null="false" default="" />
+        
+        <aggregate alias="Order" class="comOrder" local="order" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="Product" class="comProduct" local="product" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="User" class="modUser" local="user" foreign="id" cardinality="one" owner="foreign" />
+        <composite alias="File" class="DigitalproductFile" local="id" foreign="id" cardinality="one" owner="foreign" />
+    </object>
+
+    <object class="DigitalproductFile" table="commerce_digitalproduct_file" extends="comSimpleObject">
+        <field key="digitalproduct_id" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" />
+
+        <field key="resource" dbtype="text" phptype="string" null="true" />
+        <field key="file" dbtype="text" phptype="string" null="true" />
+
+        <field key="download_count" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" default="0" />
+        <field key="download_expiry" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" default="0" />
+
+        <aggregate alias="resource" class="modResource" local="resource" foreign="id" cardinality="one" owner="foreign" />
+        <aggregate alias="Digitalproduct" class="Digitalproduct" local="digitalproduct_id" foreign="id" cardinality="one" owner="foreign" />
+    </object>
+</model>
