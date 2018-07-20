@@ -107,8 +107,10 @@ $modulePath = $componentPath . '/core/components/commerce_digitalproduct/src/Mod
 // Instruct Commerce to load modules from our directory, providing the base namespace and module path twice
 $commerce->loadModulesFromDirectory($modulePath, 'RogueClarity\\Digitalproduct\\Modules\\', $modulePath);
 
-$manager = $modx->getManager();
 $modx->addPackage('commerce_digitalproduct', $componentPath . '/core/components/commerce_digitalproduct/model/');
+$manager = $modx->getManager();
+$generator = $manager->getGenerator();
+$generator->parseSchema($componentPath . '/core/components/commerce_digitalproduct/model/schema/commerce_digitalproduct.mysql.schema.xml', $componentPath . '/core/components/commerce_digitalproduct/model/');
 $manager->createObjectContainer('Digitalproduct');
 $manager->createObjectContainer('DigitalproductFile');
 

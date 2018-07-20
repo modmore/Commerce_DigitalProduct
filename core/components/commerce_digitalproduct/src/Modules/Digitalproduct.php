@@ -6,7 +6,7 @@ use Twig\Loader\ChainLoader;
 use Twig\Loader\FilesystemLoader;
 use modmore\Commerce\Events\Checkout;
 use modmore\Commerce\Frontend\Steps\ThankYou;
-// use modmore\Commerce\Frontend\Steps\Payment;
+use modmore\Commerce\Frontend\Steps\Payment;
 
 require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
@@ -53,7 +53,7 @@ class Digitalproduct extends BaseModule {
     public function getDigitalProducts(Checkout $event)
     {
         $step = $event->getStep();
-        if(!($step instanceof ThankYou)) {
+        if (!($step instanceof ThankYou)) {
             return;
         }
 
@@ -81,53 +81,66 @@ class Digitalproduct extends BaseModule {
 
         foreach ($orderItems as $orderItem) {
             $product = $orderItem->getProduct();
-            if ($product->get('class_key') === 'DigitalproductProduct') {
-                // Add the product to the digitalproduct table for tracking
-                $digitalProduct = $this->adapter->newObject('Digitalproduct', [
-                    'order' => $order->get('id'),
-                    'product' => $product->get('id'),
-                    'user' => $user ? $user->get('id') : 0,
+            // This could support class variations in the future?
+            if ($product->get('class_key') !== 'DigitalproductProduct') {
+                continue;
+            }
+
+            // Add the product to the digitalproduct table for tracking
+            $digitalProduct = $this->adapter->newObject('Digitalproduct', [
+                'order' => $order->get('id'),
+                'product' => $product->get('id'),
+                'user' => $user ? $user->get('id') : 0,
+            ]);
+            $digitalProduct->save();
+
+            $id = $product->get('id');
+            // Get the resources attached to this product
+            $resources = $this->getDigitalProductResources($product);
+            if ($resources) {
+                $output['resources'][$id] = [
+                    'resources' => $resources,
+                    'product' => $product->toArray(),
+                ];
+            }
+
+            // Get the files attached to this product
+            $files = $this->getDigitalProductFiles($product);
+            if ($files) {
+                $output['files'][$id] = [
+                    'files' => $files,
+                    'product' => $product->toArray(),
+                ];
+            }
+
+            // Add the files/resources
+            if ($resource || $files) {
+                $digitalProductFile = $this->adapter->newObject('DigitalproductFile', [
+                    'digitalproduct_id' => $digitalProduct->get('id'),
+                    'resource' => $resources ? serialize($resources) : '',
+                    'file' => $files ? serialize($files) : '',
+                    'download_expiry' => $this->getDownloadExpiry($product),
                     'secret' => $this->generateSecret()
                 ]);
-                $digitalProduct->save();
+                $digitalProductFile->save();
 
-                $id = $product->get('id');
-                // Get the resources attached to this product
-                $resources = $this->getDigitalProductResources($product);
-                if ($resources) {
-                    $output['resources'][] = [
-                        'resources' => $resources,
-                        'product' => $product->toArray()
-                    ];
+                if (!empty($digitalProductFile->get('file'))) {
+                    $output['resources'][$id]['data'] = $digitalProductFile->toArray();
+                }
+                if (!empty($digitalProductFile->get('resource'))) {
+                    $output['files'][$id]['data'] = $digitalProductFile->toArray();
                 }
 
-                // Get the files attached to this product
-                $files = $this->getDigitalProductFiles($product);
-                if ($files) {
-                    $output['files'][] = [
-                        'files' => $files,
-                        'product' => $product->toArray()
-                    ];
-                }
+                // Also make these accessible in the all array in twig
+                $output['all'][$id] = array_merge($resources, $files);
+            }
 
-                // Add the files/resources
-                if ($resource || $files) {
-                    $digitalProductFile = $this->adapter->newObject('DigitalproductFile', [
-                        'digitalproduct_id' => $digitalProduct->get('id'),
-                        'resource' => $resources ? serialize($resources) : '',
-                        'file' => $files ? serialize($files) : '',
-                        'download_expiry' => $this->getDownloadExpiry($product)
-                    ]);
-                    $digitalProductFile->save();
-                }
-
-                // Joins the user to the product's usergroup
-                if ($user && $product->getProperty('usergroup')) {
-                    $user->joinGroup($product->getProperty('usergroup'));
-                }
+            // Joins the user to the product's usergroup if they are logged in
+            if ($user && $product->getProperty('usergroup')) {
+                $user->joinGroup($product->getProperty('usergroup'));
             }
         }
-
+        
         return $output;
     }
 
@@ -195,15 +208,20 @@ class Digitalproduct extends BaseModule {
 
     /**
      * Generates secret to use for tracking and viewing order products.
-     *
+     * @todo support modifying bytes via system setting
+     * 
      * @return string
      */
-    public function generateSecret($bytes = 10, $check = true)
+    public function generateSecret($secret = null, $bytes = 20, $check = true)
     {
-        $secret = bin2hex(openssl_random_pseudo_bytes($bytes));
+        // Allow future customization of secret for custom downloads. 
+        if (!$secret) {
+            // $secret = random_bytes($bytes);
+            $secret = bin2hex(openssl_random_pseudo_bytes($bytes));
+        }
         // Check to ensure random generated string has not been used before
         if ($check) {
-            $query = $this->adapter->getObject('Digitalproduct', ['secret' => $secret]);
+            $query = $this->adapter->getObject('DigitalproductFile', ['secret' => $secret]);
 
             if ($query) {
                 // Generate a new one if it is being used.
@@ -216,11 +234,6 @@ class Digitalproduct extends BaseModule {
     public function getModuleConfiguration(\comModule $module)
     {
         $fields = [];
-
-//        $fields[] = new DescriptionField($this->commerce, [
-//            'description' => $this->adapter->lexicon('commerce_digitalproduct.module_description'),
-//        ]);
-
         return $fields;
     }
 }

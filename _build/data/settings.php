@@ -8,5 +8,9 @@ return [
     'expiration_times' => [
         'area' => 'general',
         'value' => '1 day==+1 day||1 week==+1 week||1 month==+1 month||Never=='
+    ],
+    'download_method' => [
+        'area' => 'general',
+        'value' => 'redirect'
     ]
 ];

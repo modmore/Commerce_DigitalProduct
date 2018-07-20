@@ -8,8 +8,6 @@
         <field key="order" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" default="0" />
         <field key="product" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" default="0" />
         <field key="user" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" default="0" />
-        <!-- Used in URLs for tracking and viewing -->
-        <field key="secret" dbtype="varchar" precision="190" phptype="string" null="false" default="" />
         
         <aggregate alias="Order" class="comOrder" local="order" foreign="id" cardinality="one" owner="foreign" />
         <aggregate alias="Product" class="comProduct" local="product" foreign="id" cardinality="one" owner="foreign" />
@@ -19,6 +17,8 @@
 
     <object class="DigitalproductFile" table="commerce_digitalproduct_file" extends="comSimpleObject">
         <field key="digitalproduct_id" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" />
+        <!-- Used in URLs for tracking and viewing -->
+        <field key="secret" dbtype="varchar" precision="190" phptype="string" null="false" default="" />
 
         <field key="resource" dbtype="text" phptype="string" null="true" />
         <field key="file" dbtype="text" phptype="string" null="true" />

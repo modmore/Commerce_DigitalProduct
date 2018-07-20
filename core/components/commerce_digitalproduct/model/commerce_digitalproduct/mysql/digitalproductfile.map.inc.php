@@ -22,6 +22,7 @@ $xpdo_meta_map['DigitalproductFile']= array (
   'fields' => 
   array (
     'digitalproduct_id' => NULL,
+    'secret' => '',
     'resource' => NULL,
     'file' => NULL,
     'download_count' => 0,
@@ -36,6 +37,14 @@ $xpdo_meta_map['DigitalproductFile']= array (
       'precision' => '10',
       'phptype' => 'int',
       'null' => false,
+    ),
+    'secret' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '190',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
     ),
     'resource' => 
     array (

@@ -1,5 +1,4 @@
 <?php
-require_once strtr(realpath(dirname(dirname(__FILE__))), '\\', '/') . '/digitalproductproduct.class.php';
 /**
  * Digitalproduct for Commerce.
  *
@@ -10,7 +9,5 @@ require_once strtr(realpath(dirname(dirname(__FILE__))), '\\', '/') . '/digitalp
  * @package commerce_digitalproduct
  * @license See core/components/commerce_digitalproduct/docs/license.txt
  */
-class DigitalproductProduct_mysql extends DigitalproductProduct
-{
-
-}
+require_once (dirname(__DIR__) . '/digitalproductproduct.class.php');
+class DigitalproductProduct_mysql extends DigitalproductProduct {}
