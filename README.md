@@ -46,3 +46,4 @@ Finally, enable the module in Commerce -> Configuration -> Modules. You can now 
 ### ??? Future
 
 - Option to let user customize the secret for the URL as well as customizing the amount of bytes openssl\_random\_pseudo\_bytes uses. Method is already implemented, just needs form fields.
+- Commerce dashboard reports (products with most downloads, more?).
