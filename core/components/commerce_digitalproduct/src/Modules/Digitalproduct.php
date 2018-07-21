@@ -6,7 +6,7 @@ use Twig\Loader\ChainLoader;
 use Twig\Loader\FilesystemLoader;
 use modmore\Commerce\Events\Checkout;
 use modmore\Commerce\Frontend\Steps\ThankYou;
-use modmore\Commerce\Frontend\Steps\Payment;
+// use modmore\Commerce\Frontend\Steps\Payment;
 
 require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
@@ -53,8 +53,7 @@ class Digitalproduct extends BaseModule {
     public function getDigitalProducts(Checkout $event)
     {
         $step = $event->getStep();
-        //if (!($step instanceof ThankYou)) {
-        if (!($step instanceof Payment)) {
+        if (!($step instanceof ThankYou)) {
             return;
         }
 
