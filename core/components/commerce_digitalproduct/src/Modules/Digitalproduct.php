@@ -53,7 +53,8 @@ class Digitalproduct extends BaseModule {
     public function getDigitalProducts(Checkout $event)
     {
         $step = $event->getStep();
-        if (!($step instanceof ThankYou)) {
+        //if (!($step instanceof ThankYou)) {
+        if (!($step instanceof Payment)) {
             return;
         }
 
@@ -94,50 +95,22 @@ class Digitalproduct extends BaseModule {
             ]);
             $digitalProduct->save();
 
-            $id = $product->get('id');
-            // Get the resources attached to this product
-            $resources = $this->getDigitalProductResources($product);
-            if ($resources) {
-                $output['resources'][$id] = [
-                    'resources' => $resources,
-                    'product' => $product->toArray(),
-                ];
-            }
+            // Get the digital items
+            $resources = $this->getDigitalProductResources($product, $digitalProduct);
+            $files = $this->getDigitalProductFiles($product, $digitalProduct);
+            $all = array_merge($resources, $files);
 
-            // Get the files attached to this product
-            $files = $this->getDigitalProductFiles($product);
-            if ($files) {
-                $output['files'][$id] = [
-                    'files' => $files,
-                    'product' => $product->toArray(),
-                ];
-            }
-
-            // Add the files/resources
-            if ($resource || $files) {
-                $digitalProductFile = $this->adapter->newObject('DigitalproductFile', [
-                    'digitalproduct_id' => $digitalProduct->get('id'),
-                    'resource' => $resources ? serialize($resources) : '',
-                    'file' => $files ? serialize($files) : '',
-                    'download_expiry' => $this->getDownloadExpiry($product),
-                    'secret' => $this->generateSecret()
-                ]);
-                $digitalProductFile->save();
-
-                if (!empty($digitalProductFile->get('file'))) {
-                    $output['resources'][$id]['data'] = $digitalProductFile->toArray();
-                }
-                if (!empty($digitalProductFile->get('resource'))) {
-                    $output['files'][$id]['data'] = $digitalProductFile->toArray();
-                }
-
-                // Also make these accessible in the all array in twig
-                $output['all'][$id] = array_merge($resources, $files);
-            }
+            // In twig, you can see which by checking for an empty array.
+            $output[] = [
+                'resources' => $resources,
+                'files' => $files,
+                'all' => $all,
+                'product' => $product->toArray()
+            ];
 
             // Joins the user to the product's usergroup if they are logged in
             if ($user && $product->getProperty('usergroup')) {
-                $user->joinGroup($product->getProperty('usergroup'));
+                $user->joinGroup(intval($product->getProperty('usergroup')));
             }
         }
         
@@ -148,9 +121,10 @@ class Digitalproduct extends BaseModule {
      * Gets resources attached to the product.
      *
      * @param comProduct $product
+     * @param Digitalproduct $digitalProduct object
      * @return array
      */
-    public function getDigitalProductResources($product) {
+    public function getDigitalProductResources($product, $digitalProduct) {
         $output = [];
         $resources = $product->getProperty('resources');
 
@@ -158,9 +132,21 @@ class Digitalproduct extends BaseModule {
             if ($resource) {
                 $page = $this->adapter->getObject('modResource', $resource);
 
-                if ($page) {
-                    $output[] = $page->toArray();
+                if (!$page) {
+                    continue;
                 }
+
+                $digitalProductFile = $this->adapter->newObject('DigitalproductFile', [
+                    'digitalproduct_id' => $digitalProduct->get('id'),
+                    'name' => $page->get('pagetitle'), //@todo, make custom setting. Maybe let it be set by TV?
+                    'resource' => $page->get('id'),
+                    'download_expiry' => $this->getDownloadExpiry($product),
+                    'download_limit' => $this->getDownloadLimit($product),
+                    'secret' => $this->generateSecret()
+                ]);
+                $digitalProductFile->save();
+
+                $output[] = $digitalProductFile->toArray();
             }
         }
 
@@ -173,7 +159,7 @@ class Digitalproduct extends BaseModule {
      * @param comProduct $product
      * @return array
      */
-    public function getDigitalProductFiles($product) {
+    public function getDigitalProductFiles($product, $digitalProduct) {
         $output = [];
         $files = $product->getProperty('files');
 
@@ -183,6 +169,18 @@ class Digitalproduct extends BaseModule {
                     'display_name' => $file['display_name'],
                     'url' => $file['url']
                 ];
+
+                $digitalProductFile = $this->adapter->newObject('DigitalproductFile', [
+                    'digitalproduct_id' => $digitalProduct->get('id'),
+                    'name' => $file['display_name'],
+                    'file' => $file['url'],
+                    'download_expiry' => $this->getDownloadExpiry($product),
+                    'download_limit' => $this->getDownloadLimit($product),
+                    'secret' => $this->generateSecret()
+                ]);
+                $digitalProductFile->save();
+
+                $output[] = $digitalProductFile->toArray();
             }
         }
 
@@ -190,20 +188,27 @@ class Digitalproduct extends BaseModule {
     }
 
     /**
-     * Computes the expiration of the download
+     * Computes the expiration of a product
      *
-     * @param [type] $product
-     * @return void
+     * @param comProduct $product
+     * @return int
      */
     public function getDownloadExpiry($product)
     {
         $expiration = $product->getProperty('download_expiry');
+        return $expiration ? strtotime($expiration) : 0;
+    }
 
-        if (!$expiration) {
-            return 0;
-        }
-
-        return strtotime($expiration);
+    /**
+     * Gets the download limit of a product
+     *
+     * @param comProduct $product
+     * @return int
+     */
+    public function getDownloadLimit($product)
+    {
+        $limit = $product->getProperty('download_limit');
+        return $limit ? $limit : 0;
     }
 
     /**
