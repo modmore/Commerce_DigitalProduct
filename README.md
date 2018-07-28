@@ -35,6 +35,22 @@ If you want to use resources, configure the parents to look under for resources 
 
 Finally, enable the module in Commerce -> Configuration -> Modules. You can now make a delivery type with the shipment type of digital shipment and create digital products!
 
+## Options
+
+- `commerce_digitalproduct.download_method`: method that will be used to download the file. Out of the box, it supports redirect (redirects to a URL), forced (force download the file with PHP, slow for large files), sendfile (X-Accel-Redirect, requires additional server setup). Defaults to redirect.
+- `commerce_digitalproduct.expiration_times`: Labels and values for expiration times that appear in the product form. Uses a TV checkbox like format. Values need to be strtotime compatible.
+- `commerce_digitalproduct.resource_parents`: Parents to look under for the resources input. Comma delimited.
+
+## `digitalproduct.get_file` Snippet
+
+This snippet generates the URL to download the file after purchase.
+
+Supported properties:
+
+- checkUser: checks for the user who made the order to verify, defaults to 0.
+- checkCount: checks if user is under their max downloads, defaults to 1.
+- checkExpiry: checks if file download is expired, defaults to 1.
+
 ## Roadmap
 
 ### 1.0.0-pl
