@@ -9,8 +9,8 @@ return [
         'area' => 'general',
         'value' => '1 day==+1 day||1 week==+1 week||1 month==+1 month||Never=='
     ],
-    'download_method' => [
+    'download_methods' => [
         'area' => 'general',
-        'value' => 'redirect'
+        'value' => 'Redirect==redirect||Force==force'
     ]
 ];

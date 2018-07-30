@@ -20,12 +20,12 @@ Here is a very basic example which loops through resources and files seperately:
         <h4>{{ digitalProduct.product.name }} {{ lex('commerce_digitalproduct.pages') }}</h4>
 
         {% for resource in digitalProduct.resources %}
-            <p><a href="[[~{{ resource.resource }}]]">{{ resource.name }}</a></p>
+            <p><a href="[[~DOWNLOADRESOURCE]]?secret={{ resource.secret }}">{{ resource.name }}</a></p>
         {% endfor %}
             
         <h4>{{ digitalProduct.product.name }} {{ lex('commerce_digitalproduct.files') }}</h4>
         {% for file in digitalProduct.files %}
-            <p><a href="{{ file.file }}">{{ file.name }}</a></p>
+            <p><a href="[[~DOWNLOADRESOURCE]]?secret={{ resource.secret }}">{{ file.name }}</a></p>
         {% endfor %}
     {% endfor %}
 </div>

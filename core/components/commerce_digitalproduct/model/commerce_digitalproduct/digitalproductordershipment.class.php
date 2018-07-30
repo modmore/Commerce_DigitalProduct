@@ -18,6 +18,10 @@ class DigitalproductOrderShipment extends comOrderShipment
     {
         $fields = [];
 
+        // Get required options
+        $expTimes = self::explodeSetting($commerce->adapter->getOption('commerce_digitalproduct.expiration_times', null, ''));
+        $methods = self::explodeSetting($commerce->adapter->getOption('commerce_digitalproduct.download_methods', null, ''));
+
         $fields[] = new NumberField($commerce, [
             'label' => $commerce->adapter->lexicon('commerce_digitalproduct.dl_limit'),
             'name' => 'properties[download_limit]',
@@ -25,25 +29,20 @@ class DigitalproductOrderShipment extends comOrderShipment
             'value' => $product->getProperty('download_limit')
         ]);
 
-        // Get and format the set expirations options
-        $expOptions = explode('||', $commerce->adapter->getOption('commerce_digitalproduct.expiration_times', null, ''));
-        foreach ($expOptions as $expOption) {
-            $time = explode('==', $expOption);
-            $label = $time[0];
-            $value = count($time) > 1 ? $time[1] : $time[0];
-
-            $expTimes[] = [
-                'label' => $label,
-                'value' => $value
-            ];
-        }
-
         $fields[] = new SelectField($commerce, [
             'label' => $commerce->adapter->lexicon('commerce_digitalproduct.dl_expiry'),
             'name' => 'properties[download_expiry]',
             'options' => $expTimes,
             'description' => $commerce->adapter->lexicon('commerce_digitalproduct.dl_expiry_desc'),
             'value' => $product->getProperty('download_expiry')
+        ]);
+
+        $fields[] = new SelectField($commerce, [
+            'label' => $commerce->adapter->lexicon('commerce_digitalproduct.dl_method'),
+            'name' => 'properties[download_method]',
+            'options' => $methods,
+            'description' => $commerce->adapter->lexicon('commerce_digitalproduct.dl_method_desc'),
+            'value' => $product->getProperty('download_method')
         ]);
 
         // We're not using SelectField's modUserGroup options class because we also want a none selector 
@@ -68,5 +67,30 @@ class DigitalproductOrderShipment extends comOrderShipment
         ]);
 
         return $fields;
+    }
+
+    /**
+     * Turns setting string into select options array
+     *
+     * @param [type] $setting
+     * @return void
+     */
+    public static function explodeSetting($setting)
+    {
+        $options = explode('||', $setting);
+        $output = [];
+
+        foreach ($options as $option) {
+            $opt = explode('==', $option);
+            $label = $opt[0];
+            $value = count($opt) > 1 ? $opt[1] : $opt[0];
+
+            $output[] = [
+                'label' => $label,
+                'value' => $value
+            ];
+        }
+
+        return $output;
     }
 }

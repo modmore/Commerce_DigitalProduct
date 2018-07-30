@@ -13,10 +13,10 @@ $xpdo_meta_map['DigitalproductFile']= array (
     'digitalproduct_id' => NULL,
     'secret' => '',
     'name' => '',
-    'resource' => 0,
     'file' => NULL,
     'download_count' => 0,
     'download_limit' => 0,
+    'download_method' => '',
     'download_expiry' => 0,
   ),
   'fieldMeta' => 
@@ -45,14 +45,6 @@ $xpdo_meta_map['DigitalproductFile']= array (
       'null' => false,
       'default' => '',
     ),
-    'resource' => 
-    array (
-      'dbtype' => 'int',
-      'attributes' => 'unsigned',
-      'phptype' => 'int',
-      'null' => false,
-      'default' => 0,
-    ),
     'file' => 
     array (
       'dbtype' => 'text',
@@ -76,6 +68,14 @@ $xpdo_meta_map['DigitalproductFile']= array (
       'phptype' => 'int',
       'null' => false,
       'default' => 0,
+    ),
+    'download_method' => 
+    array (
+      'dbtype' => 'varchar',
+      'precision' => '190',
+      'phptype' => 'string',
+      'null' => false,
+      'default' => '',
     ),
     'download_expiry' => 
     array (

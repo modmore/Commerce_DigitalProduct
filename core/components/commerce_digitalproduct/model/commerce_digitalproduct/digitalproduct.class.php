@@ -23,11 +23,11 @@ class Digitalproduct extends comSimpleObject
      */
     public function getOrder()
     {
-        if ($this->_order) {
-            return $this->_order;
+        if (!$this->_order) {
+            $this->_order = $this->adapter->getObject('comOrder', $this->get('order'));
         }
 
-        return $this->adapter->getObject('comOrder', $this->get('order'));
+        return $this->_order;
     }
 
     /**
@@ -37,11 +37,11 @@ class Digitalproduct extends comSimpleObject
      */
     public function getShipment()
     {
-        if ($this->_shipment) {
-            return $this->_shipment;
+        if (!$this->_shipment) {
+            $this->_shipment = $this->adapter->getObject('comOrderShipment', $this->get('shipment'));
         }
 
-        return $this->adapter->getObject('comOrderShipment', $this->get('shipment'));
+        return $this->_shipment;
     }
 
     /**
@@ -51,11 +51,11 @@ class Digitalproduct extends comSimpleObject
      */
     public function getProduct()
     {
-        if ($this->_product) {
-            return $this->_product;
+        if (!$this->_product) {
+            $this->_product = $this->adapter->getObject('comProduct', $this->get('product'));
         }
 
-        return $this->adapter->getObject('comProduct', $this->get('product'));
+        return $this->_product;
     }
 
     /**
@@ -66,10 +66,10 @@ class Digitalproduct extends comSimpleObject
     public function getUser()
     {
         if ($this->_user) {
-            return $this->_user;
+            $this->_user = $this->get('user');
         }
 
-        return $this->adapter->getUser();
+        return $this->_user;
     }
 
 }

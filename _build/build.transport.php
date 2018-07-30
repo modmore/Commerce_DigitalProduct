@@ -24,7 +24,7 @@ if (!defined('MOREPROVIDER_BUILD')) {
     define('PKG_NAME', 'Commerce_ProjectName');
     define('PKG_NAMESPACE', 'commerce_digitalproduct');
     define('PKG_VERSION', '1.0.0');
-    define('PKG_RELEASE', 'rc1');
+    define('PKG_RELEASE', 'pl');
 
     /* load modx */
     require_once dirname(dirname(__FILE__)) . '/config.core.php';

@@ -20,7 +20,7 @@ class Digitalproduct extends BaseModule {
 
     public function getAuthor()
     {
-        return 'Tony Klapatch - Rogue Clarity';
+        return 'Tony Klapatch - Rogue Clarity Studios';
     }
 
     public function getDescription()
@@ -138,7 +138,8 @@ class Digitalproduct extends BaseModule {
                 $digitalProductFile = $this->adapter->newObject('DigitalproductFile', [
                     'digitalproduct_id' => $digitalProduct->get('id'),
                     'name' => $page->get('pagetitle'), //@todo, make custom setting. Maybe let it be set by TV?
-                    'resource' => $page->get('id'),
+                    'file' => $page->get('id'),
+                    'download_method' => $product->getProperty('download_method'),
                     'download_expiry' => $this->getDownloadExpiry($product),
                     'download_limit' => $this->getDownloadLimit($product),
                     'secret' => $this->generateSecret()
@@ -173,6 +174,7 @@ class Digitalproduct extends BaseModule {
                     'digitalproduct_id' => $digitalProduct->get('id'),
                     'name' => $file['display_name'],
                     'file' => $file['url'],
+                    'download_method' => $product->getProperty('download_method'),
                     'download_expiry' => $this->getDownloadExpiry($product),
                     'download_limit' => $this->getDownloadLimit($product),
                     'secret' => $this->generateSecret()
@@ -216,7 +218,7 @@ class Digitalproduct extends BaseModule {
      * 
      * @return string
      */
-    public function generateSecret($secret = null, $bytes = 20, $check = true)
+    public function generateSecret($secret = null, $bytes = 40, $check = true)
     {
         // Allow future customization of secret for custom downloads. 
         if (!$secret) {
