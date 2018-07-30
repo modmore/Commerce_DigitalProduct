@@ -13,6 +13,12 @@ function getSnippetContent($filename = '') {
     return $o;
 }
 
+function getChunkContent($filename)
+{
+    $o = file_get_contents($filename);
+    return $o;
+}
+
 $mtime = microtime();
 $mtime = explode(" ", $mtime);
 $mtime = $mtime[1] + $mtime[0];
@@ -21,7 +27,7 @@ set_time_limit(0);
 
 if (!defined('MOREPROVIDER_BUILD')) {
     /* define version */
-    define('PKG_NAME', 'Commerce_ProjectName');
+    define('PKG_NAME', 'Commerce_DigitalProduct');
     define('PKG_NAMESPACE', 'commerce_digitalproduct');
     define('PKG_VERSION', '1.0.0');
     define('PKG_RELEASE', 'pl');
@@ -83,6 +89,29 @@ if (is_array($settings)) {
     }
     $modx->log(modX::LOG_LEVEL_INFO,'Packaged in '.count($settings).' system settings.'); flush();
     unset($settings,$setting,$attributes);
+}
+
+/* Create category */
+$category = $modx->newObject('modCategory');
+$category->set('id', 1);
+$category->set('category', 'Commerce_DigitalProduct');
+
+/* Add snippets */
+$modx->log(modX::LOG_LEVEL_INFO, 'Adding in snippets.');
+$snippets = include $sources['data'] . 'transport.snippets.php';
+if (is_array($snippets)) {
+    $category->addMany($snippets);
+} else {
+    $modx->log(modX::LOG_LEVEL_FATAL, 'Adding snippets failed.');
+}
+
+/* Add chunks */
+$modx->log(modX::LOG_LEVEL_INFO, 'Adding in chunks.');
+$snippets = include $sources['data'] . 'transport.chunks.php';
+if (is_array($chunks)) {
+    $category->addMany($chunks);
+} else {
+    $modx->log(modX::LOG_LEVEL_FATAL, 'Adding chunks failed.');
 }
 
 // Add the validator to check server requirements

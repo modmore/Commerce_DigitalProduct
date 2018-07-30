@@ -1,4 +1,9 @@
-++ Digitalproduct for Commerc
-++ Released on 7/19/2018
-++++++++++++++++++++++++++
+Digitalproduct for Commerce
+
+1.0.0-pl Released on 7/30/2018
+==============
+- First public release
+
+1.0.0-dev Released on 7/19/2018
+==============
 - First dev release
