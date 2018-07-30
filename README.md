@@ -37,7 +37,7 @@ Finally, enable the module in Commerce -> Configuration -> Modules. You can now 
 
 ## Options
 
-- `commerce_digitalproduct.download_method`: method that will be used to download the file. Out of the box, it supports redirect (redirects to a URL), forced (force download the file with PHP, slow for large files), sendfile (X-Accel-Redirect, requires additional server setup). Defaults to redirect.
+- `commerce_digitalproduct.download_methods`: methods that can be used to download the file. Out of the box, it supports redirect (redirects to a URL) and forced (force download the file with PHP, not good for large files. Only works for resources if the resource is a web link). Additionally, you can use a custom snippet download method. Check out the digitalproduct.get_file snippet for how to implement a custom snippet download method.
 - `commerce_digitalproduct.expiration_times`: Labels and values for expiration times that appear in the product form. Uses a TV checkbox like format. Values need to be strtotime compatible.
 - `commerce_digitalproduct.resource_parents`: Parents to look under for the resources input. Comma delimited.
 
@@ -51,15 +51,10 @@ Supported properties:
 - checkCount: checks if user is under their max downloads, defaults to 1.
 - checkExpiry: checks if file download is expired, defaults to 1.
 
-## Roadmap
+## Planned Features
 
-### 1.0.0-pl
-
-- Snippet to protect file URLs, count downloads, and enforce download_expiry. Also the option to remove user group at the end of expiry.
+- X-Accel-Redirect support.
+- Option to remove user group at the end of expiry.
 - Disable/enable either files and resources display in the product form via a system setting.
-
-
-### ??? Future
-
-- Option to let user customize the secret for the URL as well as customizing the amount of bytes openssl\_random\_pseudo\_bytes uses. Method is already implemented, just needs form fields.
 - Commerce dashboard reports (products with most downloads, more?).
+- Option to let user customize the secret for the URL as well as customizing the amount of bytes openssl\_random\_pseudo\_bytes uses. Method is already implemented, just needs form fields.
