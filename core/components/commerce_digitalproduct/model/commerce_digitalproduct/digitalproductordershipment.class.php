@@ -1,6 +1,10 @@
 <?php
+
 use modmore\Commerce\Admin\Widgets\Form\NumberField;
 use modmore\Commerce\Admin\Widgets\Form\SelectField;
+use modmore\Commerce\Admin\Widgets\Form\Tab;
+use RogueClarity\Digitalproduct\Admin\Widgets\Form\ResourceField;
+use RogueClarity\Digitalproduct\Admin\Widgets\Form\FileLinksField;
 
 /**
  * Digitalproduct for Commerce.
@@ -45,25 +49,31 @@ class DigitalproductOrderShipment extends comOrderShipment
             'value' => $product->getProperty('download_method')
         ]);
 
-        // We're not using SelectField's modUserGroup options class because we also want a none selector 
-        $modUserGroups = $commerce->adapter->getCollection('modUserGroup');
-        $userGroups[] = [
-            'label' => $commerce->adapter->lexicon('commerce_digitalproduct.user_group_none'),
-            'value' => ''
-        ];
-        foreach ($modUserGroups as $modUserGroup) {
-            $userGroups[] = [
-                'label' => $modUserGroup->get('name'),
-                'value' => $modUserGroup->get('id')
-            ];
-        }
-
         $fields[] = new SelectField($commerce, [
             'label' => $commerce->adapter->lexicon('commerce_digitalproduct.user_group'),
             'name' => 'properties[usergroup]',
             'description' => $commerce->adapter->lexicon('commerce_digitalproduct.user_group_desc'),
-            'options' => $userGroups,
+            'optionsClass' => 'modUserGroup',
+            'emptyOption' => true,
             'value' => $product->getProperty('usergroup')
+        ]);
+
+        $fields[] = new Tab($commerce, [
+            'label' => $commerce->adapter->lexicon('commerce_digitalproduct.product_tab')
+        ]);
+
+        $fields[] = new ResourceField($commerce, [
+            'label' => $commerce->adapter->lexicon('commerce_digitalproduct.resources'),
+            'name' => 'properties[resources]',
+            'description' => $commerce->adapter->lexicon('commerce_digitalproduct.resources_desc'),
+            'value' => $product->getProperty('resources')
+        ]);
+
+        $fields[] = new FileLinksField($commerce, [
+            'label' => $commerce->adapter->lexicon('commerce_digitalproduct.files'),
+            'name' => 'properties[files]',
+            'description' => $commerce->adapter->lexicon('commerce_digitalproduct.files_desc'),
+            'value' => $product->getProperty('files')
         ]);
 
         return $fields;

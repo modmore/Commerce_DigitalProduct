@@ -19,10 +19,11 @@ $_lang['commerce_digitalproduct.dl_limit'] = 'Download Limit';
 $_lang['commerce_digitalproduct.dl_limit_desc'] = 'Maximum amount of times the user can download the files / resources attached to this product.';
 $_lang['commerce_digitalproduct.dl_expiry'] = 'Expiration Time';
 $_lang['commerce_digitalproduct.dl_expiry_desc'] = 'Time the user has to download the files / resources attached to this product.';
+$_lang['commerce_digitalproduct.dl_method'] = 'Download Method';
+$_lang['commerce_digitalproduct.dl_method_desc'] = 'Download method used for the file.';
 $_lang['commerce_digitalproduct.dl_expiry_format'] = 'Invalid time format.';
 $_lang['commerce_digitalproduct.user_group'] = 'User Group';
 $_lang['commerce_digitalproduct.user_group_desc'] = 'The user group to grant customers access to when they\'ve bought this product.';
-$_lang['commerce_digitalproduct.user_group_none'] = 'None';
 
 // Product fields
 $_lang['commerce_digitalproduct.resources'] = 'Resources';

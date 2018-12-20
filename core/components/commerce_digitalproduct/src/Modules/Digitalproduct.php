@@ -58,10 +58,6 @@ class Digitalproduct extends BaseModule {
         }
 
         $order = $event->getOrder();
-        if ($order->getState() !== \comOrder::STATE_CART) {
-            return;
-        }
-
         $digitalProducts = $this->processDigitalProducts($order);
 
         $step->setPlaceholder('digitalProducts', $digitalProducts);
@@ -80,11 +76,13 @@ class Digitalproduct extends BaseModule {
         $user = $this->adapter->getUser();
 
         foreach ($orderItems as $orderItem) {
-            $product = $orderItem->getProduct();
-            // This could support class variations in the future?
-            if ($product->get('class_key') !== 'DigitalproductProduct') {
+            // Determine if item is a digital product
+            $deliveryType = $orderItem->getOne('DeliveryType');
+            if ($deliveryType->get('shipment_type') !== 'DigitalproductOrderShipment') {
                 continue;
             }
+
+            $product = $orderItem->getProduct();
 
             // Add the product to the digitalproduct table for tracking
             $digitalProduct = $this->adapter->newObject('Digitalproduct', [

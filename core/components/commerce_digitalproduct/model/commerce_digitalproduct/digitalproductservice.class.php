@@ -64,4 +64,21 @@ class DigitalproductService
             'secret' => $secret
         ]);
     }
+
+    /**
+     * Gets a user's files based on user id
+     *
+     * @param [type] $userId
+     * @return void
+     */
+    public function getUserFiles($userId)
+    {
+        $files = $this->modx->newQuery('DigitalproductFile');
+        $files->innerJoin('Digitalproduct');
+        $files->where([
+            'Digitalproduct.user' => $userId
+        ]);
+
+        return $this->modx->getCollection('DigitalproductFile', $files);
+    }
 }

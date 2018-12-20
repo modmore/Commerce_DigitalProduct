@@ -1,5 +1,13 @@
 Digitalproduct for Commerce
 
+1.1.0-pl Released on 12/19/2018
+==============
+- Move custom product fields to shipment (can use your own custom product)
+- Add getUserFiles method on service class for future snippet
+- Fix 0 download limit not giving unlimited downloads
+- Use new empty option for user group SelectField (requires Commerce 0.11.4 or higher)
+- Fix download method lexican
+
 1.0.0-pl Released on 7/30/2018
 ==============
 - First public release

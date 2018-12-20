@@ -35,7 +35,7 @@ class DigitalproductFile extends comSimpleObject
      * @param boolean checks the expiration date on the file
      * @return boolean
      */
-    public function hasPermission($checkUser = true, $checkCount = true, $checkExpiry = true)
+    public function hasPermission($checkUser = false, $checkCount = true, $checkExpiry = true)
     {
         $product = $this->getDigitalProduct();
         $currentUser = $this->adapter->getUser() ? $this->adapter->getUser()->get('id') : 0;
@@ -46,7 +46,7 @@ class DigitalproductFile extends comSimpleObject
         }
 
         // Check the download count
-        if ($checkCount && $this->get('download_count') >= $this->get('download_limit')) {
+        if ($checkCount && $this->get('download_count') >= $this->get('download_limit') && $this->get('download_limit') !== 0) {
             return false;
         }
 
