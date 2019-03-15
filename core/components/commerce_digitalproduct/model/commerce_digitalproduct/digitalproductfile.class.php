@@ -2,7 +2,7 @@
 /**
  * Digitalproduct for Commerce.
  *
- * Copyright 2018 by Tony Klapatch <tony.k@rogueclarity.com>
+ * Copyright 2019 by Tony Klapatch <tony@klapatch.net>
  *
  * This file is meant to be used with Commerce by modmore. A valid Commerce license is required.
  *

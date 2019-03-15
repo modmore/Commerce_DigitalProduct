@@ -1,5 +1,11 @@
 Digitalproduct for Commerce
 
+1.2.0-pl Released on 3/15/2018
+==============
+- Fix tables not being created during installation
+- Now using the EVENT_ORDER_PAYMENT_RECEIVED event to add Digital products to a user instead of on the ThankYou page (enables usage of non-instant payment methods)
+- Checkout placeholders now set to tell which items in the cart are digital for theming
+
 1.1.0-pl Released on 12/19/2018
 ==============
 - Move custom product fields to shipment (can use your own custom product)

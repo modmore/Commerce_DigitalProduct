@@ -5,8 +5,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 use Twig\Loader\ChainLoader;
 use Twig\Loader\FilesystemLoader;
 use modmore\Commerce\Events\Checkout;
-use modmore\Commerce\Frontend\Steps\ThankYou;
-// use modmore\Commerce\Frontend\Steps\Payment;
+use modmore\Commerce\Events\Payment;
 
 require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
@@ -20,7 +19,7 @@ class Digitalproduct extends BaseModule {
 
     public function getAuthor()
     {
-        return 'Tony Klapatch - Rogue Clarity Studios';
+        return 'Tony Klapatch';
     }
 
     public function getDescription()
@@ -33,7 +32,8 @@ class Digitalproduct extends BaseModule {
         // Load our lexicon
         $this->adapter->loadLexicon('commerce_digitalproduct:default');
 
-        $dispatcher->addListener(\Commerce::EVENT_CHECKOUT_AFTER_STEP, [$this, 'getDigitalProducts']);
+        $dispatcher->addListener(\Commerce::EVENT_ORDER_PAYMENT_RECEIVED, [$this, 'getDigitalProducts']);
+        $dispatcher->addListener(\Commerce::EVENT_CHECKOUT_AFTER_STEP, [$this, 'addCheckoutPlaceholders']);
 
         // Add the xPDO package, so Commerce can detect the derivative classes
         $root = dirname(dirname(__DIR__));
@@ -50,17 +50,60 @@ class Digitalproduct extends BaseModule {
         $this->adapter->loadClass('DigitalproductOrderShipment', $path . 'commerce_digitalproduct/');
     }
 
-    public function getDigitalProducts(Checkout $event)
+    /**
+     * Get the digital product order items inside an order
+     *
+     * @param \comOrder $order
+     * @return array
+     */
+    public function getOrderDigitalItems(\comOrder $order)
+    {
+        $items = $order->getItems();
+        $digitalItems = [];
+
+        foreach ($items as $item) {
+            $deliveryType = $item->getOne('DeliveryType');
+            if ($deliveryType->get('shipment_type') !== 'DigitalproductOrderShipment') {
+                continue;
+            }
+
+            $digitalItems[] = $item;
+        }
+
+        return $digitalItems;
+    }
+
+    /**
+     * Add placeholders to checkout for templating
+     *
+     * @param Checkout $event
+     * @return void
+     */
+    public function addCheckoutPlaceholders(Checkout $event)
     {
         $step = $event->getStep();
-        if (!($step instanceof ThankYou)) {
+        $order = $event->getOrder();
+
+        $digitalItems = $this->getOrderDigitalItems($order);
+
+        if (empty($digitalItems)) {
             return;
         }
 
+        // Allow for templating cart/checkout order items for digital products
+        foreach ($digitalItems as $item) {
+            $items[$item->get('id')] = true;
+        }
+
+        $step->setPlaceholder('digital_items', $items);
+    }
+
+    public function getDigitalProducts(Payment $event)
+    {
         $order = $event->getOrder();
         $digitalProducts = $this->processDigitalProducts($order);
 
-        $step->setPlaceholder('digitalProducts', $digitalProducts);
+        $order->setProperty('digital_items', $digitalProducts);
     }
 
     /**
@@ -107,7 +150,7 @@ class Digitalproduct extends BaseModule {
 
             // Joins the user to the product's usergroup if they are logged in
             if ($user && $product->getProperty('usergroup')) {
-                $user->joinGroup(intval($product->getProperty('usergroup')));
+                $user->joinGroup((int) $product->getProperty('usergroup'));
             }
         }
         
@@ -130,6 +173,7 @@ class Digitalproduct extends BaseModule {
                 $page = $this->adapter->getObject('modResource', $resource);
 
                 if (!$page) {
+                    $this->adapter->log(1, '[Digitalproduct] Could not find resource with ID of ' . $resource);
                     continue;
                 }
 
@@ -207,13 +251,12 @@ class Digitalproduct extends BaseModule {
     public function getDownloadLimit($product)
     {
         $limit = $product->getProperty('download_limit');
-        return $limit ? $limit : 0;
+        return $limit ?: 0;
     }
 
     /**
      * Generates secret to use for tracking and viewing order products.
-     * @todo support modifying bytes via system setting
-     * 
+     *
      * @return string
      */
     public function generateSecret($secret = null, $bytes = 40, $check = true)

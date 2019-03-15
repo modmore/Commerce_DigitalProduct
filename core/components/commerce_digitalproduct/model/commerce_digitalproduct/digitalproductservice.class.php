@@ -2,7 +2,7 @@
 /**
  * Digitalproduct for Commerce.
  *
- * Copyright 2018 by Tony Klapatch <tony.k@rogueclarity.com>
+ * Copyright 2019 by Tony Klapatch <tony@klapatch.net>
  *
  * This file is meant to be used with Commerce by modmore. A valid Commerce license is required.
  *
@@ -56,7 +56,7 @@ class DigitalproductService
      * Gets a single digital product based on secret
      *
      * @param string $secret
-     * @return DigitalproductFile
+     * @return DigitalproductFile|null
      */
     public function getFile($secret)
     {
@@ -69,7 +69,7 @@ class DigitalproductService
      * Gets a user's files based on user id
      *
      * @param [type] $userId
-     * @return void
+     * @return DigitalproductFile[]
      */
     public function getUserFiles($userId)
     {

@@ -3,7 +3,7 @@
 /**
  * This snippet is part of the Commerce Digital Product module.
  * 
- * @author Tony Klapatch <tony.k@rogueclarity.com>
+ * @author Tony Klapatch <tony@klapatch.net>
  */
 
 $secret = $modx->getOption('secret', $_REQUEST, null);
