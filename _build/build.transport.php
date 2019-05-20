@@ -29,7 +29,7 @@ if (!defined('MOREPROVIDER_BUILD')) {
     /* define version */
     define('PKG_NAME', 'Commerce_DigitalProduct');
     define('PKG_NAMESPACE', 'commerce_digitalproduct');
-    define('PKG_VERSION', '1.2.0');
+    define('PKG_VERSION', '1.2.1');
     define('PKG_RELEASE', 'pl');
 
     /* load modx */
