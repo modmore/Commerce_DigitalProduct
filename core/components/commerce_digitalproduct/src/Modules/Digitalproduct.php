@@ -63,7 +63,7 @@ class Digitalproduct extends BaseModule {
 
         foreach ($items as $item) {
             $deliveryType = $item->getOne('DeliveryType');
-            if ($deliveryType->get('shipment_type') !== 'DigitalproductOrderShipment') {
+            if (!$deliveryType || $deliveryType->get('shipment_type') !== 'DigitalproductOrderShipment') {
                 continue;
             }
 
