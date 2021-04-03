@@ -4,6 +4,12 @@ Digital products for commerce allows you to create products that link to resourc
 
 This is a more advanced version of the Commerce_ResourceStore, which stored basic resource information in the user's TV. This module can be used as a enhanced replacement.
 
+> This extension was originally built and maintained by [Tony Klapatch](https://github.com/tonyklapatch), providing a wide range of functionality for selling digital products in Commerce, as part of a third-party extension not covered by modmore's support.
+> 
+> In April 2021 modmore adopted the project in an effort to make it compatible with recent Commerce releases, and to include it in modmore's standard support as an official extension. By mid-end April we'll release v1.2 that makes it official and adds that compatibility with Commerce v1.1+. 
+> 
+> _Tony, thank you for your hard work and innovation!_
+
 ## Setup
 
 Download the transport package and install it on your site. If you haven't created a custom Commerce theme, do so now. Read how to here: https://docs.modmore.com/en/Commerce/v1/Front-end_Theming.html
