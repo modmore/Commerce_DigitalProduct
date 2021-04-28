@@ -5,7 +5,6 @@ if (!file_exists($componentPath.'/config.core.php')) {
     die('ERROR: missing '.$componentPath.'/config.core.php file defining the MODX core path.');
 }
 
-echo "<pre>";
 /* Boot up MODX */
 echo "Loading modX...\n";
 require_once $componentPath . '/config.core.php';
