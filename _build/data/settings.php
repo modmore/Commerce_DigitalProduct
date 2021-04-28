@@ -12,5 +12,9 @@ return [
     'download_methods' => [
         'area' => 'general',
         'value' => 'Redirect==redirect||Force==force'
+    ],
+    'download_resource' => [
+        'area' => 'general',
+        'value' => 0,
     ]
 ];
