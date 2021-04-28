@@ -15,6 +15,11 @@ use modmore\Commerce\Admin\Widgets\Form\Tab;
  */
 class DigitalproductProduct extends comProduct
 {
+    // May have been necessary previously, but it's not necessary to use the special type anymore.
+    // Only benefit is hiding the weight/weight_unit fields but that's probably better handled in Commerce
+    // itself at some point by moving those into the standard shipment type.
+    public static $visibleType = false;
+
     public function getModelFields()
     {
         $fields = parent::getModelFields();
