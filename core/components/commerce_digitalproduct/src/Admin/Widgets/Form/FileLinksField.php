@@ -29,7 +29,7 @@ class FileLinksField extends Field
 
     public function getHTML()
     {
-        return $this->commerce->twig->render('commerce_digitalproduct/admin/widgets/fields/filelinks.twig', ['field' => $this]);
+        return $this->commerce->view()->render('commerce_digitalproduct/admin/widgets/fields/filelinks.twig', ['field' => $this]);
     }
 
     public function getValueAsArray()

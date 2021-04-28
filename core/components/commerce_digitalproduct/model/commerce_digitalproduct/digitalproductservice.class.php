@@ -61,7 +61,7 @@ class DigitalproductService
     public function getFile($secret)
     {
         return $this->modx->getObject('DigitalproductFile', [
-            'secret' => $secret
+            'secret' => (string)$secret
         ]);
     }
 
@@ -76,7 +76,7 @@ class DigitalproductService
         $files = $this->modx->newQuery('DigitalproductFile');
         $files->innerJoin('Digitalproduct');
         $files->where([
-            'Digitalproduct.user' => $userId
+            'Digitalproduct.user' => (int) $userId
         ]);
 
         return $this->modx->getCollection('DigitalproductFile', $files);

@@ -83,9 +83,9 @@ class DigitalproductOrderShipment extends comOrderShipment
      * Turns setting string into select options array
      *
      * @param [type] $setting
-     * @return void
+     * @return array
      */
-    public static function explodeSetting($setting)
+    public static function explodeSetting($setting): array
     {
         $options = explode('||', $setting);
         $output = [];
@@ -274,8 +274,7 @@ class DigitalproductOrderShipment extends comOrderShipment
     {
         // Allow future customization of secret for custom downloads.
         if (!$secret) {
-            // $secret = random_bytes($bytes);
-            $secret = bin2hex(openssl_random_pseudo_bytes($bytes));
+             $secret = bin2hex(random_bytes($bytes));
         }
         // Check to ensure random generated string has not been used before
         if ($check) {

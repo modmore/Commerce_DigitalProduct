@@ -24,7 +24,9 @@ class Digitalproduct extends comSimpleObject
     public function getOrder()
     {
         if (!$this->_order) {
-            $this->_order = $this->adapter->getObject('comOrder', $this->get('order'));
+            $this->_order = $this->adapter->getObject('comOrder', [
+                'id' => $this->get('order')
+            ]);
         }
 
         return $this->_order;
@@ -38,7 +40,9 @@ class Digitalproduct extends comSimpleObject
     public function getShipment()
     {
         if (!$this->_shipment) {
-            $this->_shipment = $this->adapter->getObject('comOrderShipment', $this->get('shipment'));
+            $this->_shipment = $this->adapter->getObject('comOrderShipment', [
+                'id' => $this->get('shipment')
+            ]);
         }
 
         return $this->_shipment;
@@ -52,7 +56,9 @@ class Digitalproduct extends comSimpleObject
     public function getProduct()
     {
         if (!$this->_product) {
-            $this->_product = $this->adapter->getObject('comProduct', $this->get('product'));
+            $this->_product = $this->adapter->getObject('comProduct', [
+                'id' => $this->get('product')
+            ]);
         }
 
         return $this->_product;

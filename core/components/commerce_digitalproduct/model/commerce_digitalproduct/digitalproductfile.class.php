@@ -21,7 +21,9 @@ class DigitalproductFile extends comSimpleObject
     public function getDigitalProduct()
     {
         if (!$this->_digitalProduct) {
-            $this->_digitalProduct = $this->adapter->getObject('Digitalproduct', $this->get('digitalproduct_id'));
+            $this->_digitalProduct = $this->adapter->getObject('Digitalproduct', [
+                'id' => $this->get('digitalproduct_id')
+            ]);
         }
 
         return $this->_digitalProduct;
@@ -65,7 +67,7 @@ class DigitalproductFile extends comSimpleObject
      */
     public function getType()
     {
-        if (intval($this->get('file'))) {
+        if ((int)$this->get('file')) {
             return 'resource';
         }
 
@@ -73,7 +75,7 @@ class DigitalproductFile extends comSimpleObject
             return 'file';
         }
 
-        $this->adapter->log(1, '[commerce_digitalproduct] Error in service class - could not determine type.');
+        $this->adapter->log(1, '[commerce_digitalproduct] Error in service class - could not determine type for product ' . $this->get('id'));
         return 'unknown';
     }
 

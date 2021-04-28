@@ -40,13 +40,10 @@ class Digitalproduct extends BaseModule {
         $path = $root . '/model/';
         $this->adapter->loadPackage('commerce_digitalproduct', $path);
 
-        // Add template path to twig
-        /** @var ChainLoader $loader */
-        $root = dirname(dirname(__DIR__));
-        $loader = $this->commerce->twig->getLoader();
-        $loader->addLoader(new FilesystemLoader($root . '/templates/'));
+        // Add template path to the Commerce view
+        $this->commerce->view()->addTemplatesPath($root . '/templates/');
 
-        // Load class for static methods.
+        // Load model class for access to static methods.
         $this->adapter->loadClass('DigitalproductOrderShipment', $path . 'commerce_digitalproduct/');
     }
 
