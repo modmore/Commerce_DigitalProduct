@@ -50,9 +50,9 @@ $xpdo_meta_map['Digitalproduct']= array (
     array (
       'class' => 'DigitalproductFile',
       'local' => 'id',
-      'foreign' => 'id',
-      'cardinality' => 'one',
-      'owner' => 'foreign',
+      'foreign' => 'digitalproduct_id',
+      'cardinality' => 'many',
+      'owner' => 'local',
     ),
   ),
   'aggregates' => 
