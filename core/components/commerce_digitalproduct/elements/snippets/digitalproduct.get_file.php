@@ -2,11 +2,13 @@
 
 /**
  * This snippet is part of the Commerce Digital Product module.
- * 
+ *
  * @author Tony Klapatch <tony@klapatch.net>
+ * @var modX $modx
+ * @var array $scriptProperties
  */
 
-$secret = $modx->getOption('secret', $_REQUEST, null);
+$secret = (string)$modx->getOption('secret', $_REQUEST, null);
 $checkUser = (bool)$modx->getOption('checkUser', $scriptProperties, 0);
 $checkCount = (bool)$modx->getOption('checkCount', $scriptProperties, 1);
 $checkExpiry = (bool)$modx->getOption('checkExpiry', $scriptProperties, 1);
@@ -14,7 +16,7 @@ $errorTpl = $modx->getOption('errorTpl', $scriptProperties, 'digitalproduct.file
 
 $modx->lexicon->load('commerce_digtalproduct:default');
 
-if (!$secret) {
+if (empty($secret)) {
     $modx->sendErrorPage();
 }
 
@@ -64,7 +66,7 @@ switch ($method) {
             }
 
             $resourceClass = $resource->get('class_key');
-            
+
             // Get URL if resource is a web link
             if ($resourceClass === 'modWebLink' && filter_var($resource->get('content'), FILTER_VALIDATE_URL)) {
                 $url = $resource->get('content');
@@ -88,16 +90,16 @@ switch ($method) {
         exit();
 
         break;
-        
+
     /* @todo For a future release
-    
+
     case 'sendfile':
         $file->download();
-        
+
         header('Content-Disposition: attachment; filename="' . $fileName . $extension . '"');
         header("Content-Type: ", true);
         header('X-Accel-Redirect: ' . $url);
-        
+
         exit();
         break;
      */
