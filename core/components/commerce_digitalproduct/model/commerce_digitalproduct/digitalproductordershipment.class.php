@@ -139,7 +139,7 @@ class DigitalproductOrderShipment extends comOrderShipment
             $digitalProduct = $this->adapter->newObject('Digitalproduct', [
                 'order' => $order->get('id'),
                 'product' => $product->get('id'),
-                'user' => $user ? $user->get('id') : 0,
+                'user' => $order->get('user'),
             ]);
             $digitalProduct->save();
 
