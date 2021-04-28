@@ -2,7 +2,6 @@
 
 use modmore\Commerce\Admin\Widgets\Form\NumberField;
 use modmore\Commerce\Admin\Widgets\Form\SelectField;
-use modmore\Commerce\Admin\Widgets\Form\Tab;
 use modmore\Commerce_DigitalProduct\Admin\Widgets\Form\ResourceField;
 use modmore\Commerce_DigitalProduct\Admin\Widgets\Form\FileLinksField;
 
@@ -21,6 +20,29 @@ class DigitalproductOrderShipment extends comOrderShipment
     public static function getFieldsForProduct(Commerce $commerce, comProduct $product, comDeliveryType $deliveryType)
     {
         $fields = [];
+
+        $fields[] = new SelectField($commerce, [
+            'label' => $commerce->adapter->lexicon('commerce_digitalproduct.user_group'),
+            'name' => 'properties[usergroup]',
+            'description' => $commerce->adapter->lexicon('commerce_digitalproduct.user_group_desc'),
+            'optionsClass' => 'modUserGroup',
+            'emptyOption' => true,
+            'value' => $product->getProperty('usergroup')
+        ]);
+
+        $fields[] = new ResourceField($commerce, [
+            'label' => $commerce->adapter->lexicon('commerce_digitalproduct.resources'),
+            'name' => 'properties[resources]',
+            'description' => $commerce->adapter->lexicon('commerce_digitalproduct.resources_desc'),
+            'value' => $product->getProperty('resources')
+        ]);
+
+        $fields[] = new FileLinksField($commerce, [
+            'label' => $commerce->adapter->lexicon('commerce_digitalproduct.files'),
+            'name' => 'properties[files]',
+            'description' => $commerce->adapter->lexicon('commerce_digitalproduct.files_desc'),
+            'value' => $product->getProperty('files')
+        ]);
 
         // Get required options
         $expTimes = self::explodeSetting($commerce->adapter->getOption('commerce_digitalproduct.expiration_times', null, ''));
@@ -47,33 +69,6 @@ class DigitalproductOrderShipment extends comOrderShipment
             'options' => $methods,
             'description' => $commerce->adapter->lexicon('commerce_digitalproduct.dl_method_desc'),
             'value' => $product->getProperty('download_method')
-        ]);
-
-        $fields[] = new SelectField($commerce, [
-            'label' => $commerce->adapter->lexicon('commerce_digitalproduct.user_group'),
-            'name' => 'properties[usergroup]',
-            'description' => $commerce->adapter->lexicon('commerce_digitalproduct.user_group_desc'),
-            'optionsClass' => 'modUserGroup',
-            'emptyOption' => true,
-            'value' => $product->getProperty('usergroup')
-        ]);
-
-        $fields[] = new Tab($commerce, [
-            'label' => $commerce->adapter->lexicon('commerce_digitalproduct.product_tab')
-        ]);
-
-        $fields[] = new ResourceField($commerce, [
-            'label' => $commerce->adapter->lexicon('commerce_digitalproduct.resources'),
-            'name' => 'properties[resources]',
-            'description' => $commerce->adapter->lexicon('commerce_digitalproduct.resources_desc'),
-            'value' => $product->getProperty('resources')
-        ]);
-
-        $fields[] = new FileLinksField($commerce, [
-            'label' => $commerce->adapter->lexicon('commerce_digitalproduct.files'),
-            'name' => 'properties[files]',
-            'description' => $commerce->adapter->lexicon('commerce_digitalproduct.files_desc'),
-            'value' => $product->getProperty('files')
         ]);
 
         return $fields;
