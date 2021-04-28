@@ -6,7 +6,7 @@ This is a more advanced version of the Commerce_ResourceStore, which stored basi
 
 > This extension was originally built and maintained by [Tony Klapatch](https://github.com/tonyklapatch), providing a wide range of functionality for selling digital products in Commerce, as part of a third-party extension not covered by modmore's support.
 >
-> In April 2021 modmore adopted the project in an effort to make it compatible with recent Commerce releases, and to include it in modmore's standard support as an official extension. By mid-end April we'll release v1.2 that makes it official and adds that compatibility with Commerce v1.1+.
+> In April 2021 modmore adopted the project in an effort to make it compatible with recent Commerce releases, and to include it in modmore's standard support as an official extension. By mid-end April we'll release v2.0 that makes it official and adds that compatibility with Commerce v1.1+.
 >
 > _Tony, thank you for your hard work and innovation!_
 
@@ -20,21 +20,28 @@ In this twig file you'll have the `digitalProducts` variable accessible when the
 
 Within files and resources, you have access to all columns within DigitalproductFile (`id`, `class_key`, `properties`, `digitalproduct_id`, `secret`, `name`, `resource`, `file`, `download_count`, `download_limit`, and `download_expiry` (unix time)). There is also access to the product instance.
 
-Here is a very basic example which loops through resources and files seperately:
+Here is a very basic example which loops through resources and files seperately, only showing headings if there are results:
+
+> Note: point the `commerce_digitalproduct.download_resource` system setting to the ID of the resource you place the `digitalproduct.get_file` snippet on, described below.
 
 ```HTML
 <div class="c-digital-products">
     {% for digitalProduct in digitalProducts %}
-        <h4>{{ digitalProduct.product.name }} {{ lex('commerce_digitalproduct.pages') }}</h4>
 
-        {% for resource in digitalProduct.resources %}
-            <p><a href="[[~DOWNLOADRESOURCE]]?secret={{ resource.secret }}">{{ resource.name }}</a></p>
-        {% endfor %}
+        {% if digitalProduct.resources|length > 0 %}
+            <h4>{{ digitalProduct.product.name }} {{ lex('commerce_digitalproduct.pages') }}</h4>
+            {% for resource in digitalProduct.resources %}
+                <p><a href="[[~[[++commerce_digitalproduct.download_resource]]]]?secret={{ resource.secret }}">{{ resource.name }}</a></p>
+            {% endfor %}
+        {% endif %}
 
-        <h4>{{ digitalProduct.product.name }} {{ lex('commerce_digitalproduct.files') }}</h4>
-        {% for file in digitalProduct.files %}
-            <p><a href="[[~DOWNLOADRESOURCE]]?secret={{ resource.secret }}">{{ file.name }}</a></p>
-        {% endfor %}
+        {% if digitalProduct.files|length > 0 %}
+            <h4>{{ digitalProduct.product.name }} {{ lex('commerce_digitalproduct.files') }}</h4>
+            {% for file in digitalProduct.files %}
+                <p><a href="[[~[[++commerce_digitalproduct.download_resource]]]]?secret={{ file.secret }}">{{ file.name }}</a></p>
+            {% endfor %}
+        {% endif %}
+
     {% endfor %}
 </div>
 ```

@@ -4,11 +4,9 @@ namespace modmore\Commerce_DigitalProduct\Modules;
 
 use modmore\Commerce\Modules\BaseModule;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Twig\Loader\ChainLoader;
-use Twig\Loader\FilesystemLoader;
 use modmore\Commerce\Events\Checkout;
 
-require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
+require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 class Digitalproduct extends BaseModule {
 
@@ -46,30 +44,6 @@ class Digitalproduct extends BaseModule {
         // Load model class for access to static methods.
         $this->adapter->loadClass('DigitalproductOrderShipment', $path . 'commerce_digitalproduct/');
     }
-
-    /**
-     * Get the digital product order items inside an order
-     *
-     * @param \comOrder $order
-     * @return array
-     */
-    public function getOrderDigitalItems(\comOrder $order)
-    {
-        $items = $order->getItems();
-        $digitalItems = [];
-
-        foreach ($items as $item) {
-            $deliveryType = $item->getOne('DeliveryType');
-            if (!$deliveryType || $deliveryType->get('shipment_type') !== 'DigitalproductOrderShipment') {
-                continue;
-            }
-
-            $digitalItems[] = $item;
-        }
-
-        return $digitalItems;
-    }
-
     /**
      * Add placeholders to checkout for templating
      *
@@ -78,21 +52,43 @@ class Digitalproduct extends BaseModule {
      */
     public function addCheckoutPlaceholders(Checkout $event)
     {
+        if ($event->getStepKey() !== 'thank-you') {
+            return;
+        }
         $step = $event->getStep();
         $order = $event->getOrder();
 
-        $digitalItems = $this->getOrderDigitalItems($order);
+        $c = $this->adapter->newQuery(\Digitalproduct::class);
+        $c->where([
+            'order' => $order->get('id'),
+        ]);
+        /** @var \Digitalproduct[] $items */
 
-        if (empty($digitalItems)) {
-            return;
+        $output = [];
+
+        $items = $this->adapter->getIterator(\Digitalproduct::class, $c);
+        foreach ($items as $item) {
+            $product = $item->getProduct();
+            $itemOutput =  [
+                'all' => [],
+                'resources' => [],
+                'files' => [],
+                'product' => $product ? $product->toArray() : [],
+            ];
+            /** @var \DigitalproductFile[] $files */
+            $files = $item->getMany('File');
+            foreach ($files as $file) {
+                $url = $file->get('url');
+                $data = $file->toArray();
+
+                $itemOutput[ is_numeric($url) ? 'resources' : 'files' ][] = $data;
+                $itemOutput['all'][] = $data;
+            }
+
+            $output[] = $itemOutput;
         }
 
-        // Allow for templating cart/checkout order items for digital products
-        foreach ($digitalItems as $item) {
-            $items[$item->get('id')] = true;
-        }
-
-        $step->setPlaceholder('digital_items', $items);
+        $step->setPlaceholder('digitalProducts', $output);
     }
 
     public function getModuleConfiguration(\comModule $module)

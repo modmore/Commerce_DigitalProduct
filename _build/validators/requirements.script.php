@@ -23,7 +23,7 @@ switch($options[xPDOTransport::PACKAGE_ACTION]) {
             $level = xPDO::LOG_LEVEL_ERROR;
             $success = false;
         }
-        $modx->log($level, '- PHP version 5.5+: ' . PHP_VERSION);
+        $modx->log($level, '- PHP version 7.1+: ' . PHP_VERSION);
 
         // Check for Commerce 0.11 +
         $corePath = $modx->getOption('commerce.core_path', null, $modx->getOption('core_path') . 'components/commerce/');
@@ -39,12 +39,12 @@ switch($options[xPDOTransport::PACKAGE_ACTION]) {
         }
         $modx->log($level, '- Commerce installed: ' . ($installed ? 'yes' : 'no'));
         if ($commerce instanceof Commerce) {
-            $installed = version_compare((string)$commerce->version, '1.1.0-pl', '>=');
+            $installed = version_compare((string)$commerce->version, '1.2.0-rc3', '>=');
             $level = $installed ? xPDO::LOG_LEVEL_INFO : xPDO::LOG_LEVEL_ERROR;
             if (!$installed) {
                 $success = false;
             }
-            $modx->log($level, '- Commerce version 1.1+: ' . (string)$commerce->version);
+            $modx->log($level, '- Commerce version 1.2.0-rc3+: ' . (string)$commerce->version);
         }
 
 

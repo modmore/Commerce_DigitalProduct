@@ -102,9 +102,10 @@ class DigitalproductOrderShipment extends comOrderShipment
     public function onOrderStateProcessing()
     {
         $order = $this->getOrder();
-        $digitalProducts = $this->processDigitalProducts($order);
+        $this->processDigitalProducts($order);
 
-        $order->setProperty('digital_items', $digitalProducts);
+        $order->setProperty('has_digital_products', true);
+        $order->save();
 
         return true;
     }
@@ -119,7 +120,7 @@ class DigitalproductOrderShipment extends comOrderShipment
     {
         $output = [];
         $orderItems = $order->getItems();
-        $user = $this->adapter->getUser();
+        $user = $order->getUser();
 
         foreach ($orderItems as $orderItem) {
             // Determine if item is a digital product
@@ -131,6 +132,7 @@ class DigitalproductOrderShipment extends comOrderShipment
             $product = $orderItem->getProduct();
 
             // Add the product to the digitalproduct table for tracking
+            /** @var Digitalproduct $digitalProduct */
             $digitalProduct = $this->adapter->newObject('Digitalproduct', [
                 'order' => $order->get('id'),
                 'product' => $product->get('id'),
