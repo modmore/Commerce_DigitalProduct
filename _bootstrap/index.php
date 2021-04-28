@@ -105,7 +105,7 @@ include $componentPath . '/core/components/commerce_digitalproduct/vendor/autolo
 $modulePath = $componentPath . '/core/components/commerce_digitalproduct/src/Modules/';
 
 // Instruct Commerce to load modules from our directory, providing the base namespace and module path twice
-$commerce->loadModulesFromDirectory($modulePath, 'RogueClarity\\Digitalproduct\\Modules\\', $modulePath);
+$commerce->loadModulesFromDirectory($modulePath, 'modmore\\Commerce_DigitalProduct\\Modules\\', $modulePath);
 
 $modx->addPackage('commerce_digitalproduct', $componentPath . '/core/components/commerce_digitalproduct/model/');
 $manager = $modx->getManager();

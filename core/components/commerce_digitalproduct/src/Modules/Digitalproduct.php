@@ -1,6 +1,6 @@
 <?php
 
-namespace RogueClarity\Digitalproduct\Modules;
+namespace modmore\Commerce_DigitalProduct\Modules;
 
 use modmore\Commerce\Modules\BaseModule;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -20,7 +20,7 @@ class Digitalproduct extends BaseModule {
 
     public function getAuthor()
     {
-        return 'Tony Klapatch';
+        return 'modmore (originally by Tony Klapatch)';
     }
 
     public function getDescription()

@@ -1,5 +1,5 @@
 <?php
-namespace RogueClarity\Digitalproduct\Admin\Widgets\Form;
+namespace modmore\Commerce_DigitalProduct\Admin\Widgets\Form;
 
 use modmore\Commerce\Admin\Widgets\Form\Field;
 

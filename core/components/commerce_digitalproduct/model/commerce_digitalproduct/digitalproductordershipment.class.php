@@ -3,8 +3,8 @@
 use modmore\Commerce\Admin\Widgets\Form\NumberField;
 use modmore\Commerce\Admin\Widgets\Form\SelectField;
 use modmore\Commerce\Admin\Widgets\Form\Tab;
-use RogueClarity\Digitalproduct\Admin\Widgets\Form\ResourceField;
-use RogueClarity\Digitalproduct\Admin\Widgets\Form\FileLinksField;
+use modmore\Commerce_DigitalProduct\Admin\Widgets\Form\ResourceField;
+use modmore\Commerce_DigitalProduct\Admin\Widgets\Form\FileLinksField;
 
 /**
  * Digitalproduct for Commerce.
@@ -110,7 +110,7 @@ class DigitalproductOrderShipment extends comOrderShipment
         $digitalProducts = $this->processDigitalProducts($order);
 
         $order->setProperty('digital_items', $digitalProducts);
-        
+
         return true;
     }
 
@@ -206,7 +206,7 @@ class DigitalproductOrderShipment extends comOrderShipment
 
     /**
      * Gets files attached to the product.
-     * 
+     *
      * @param comProduct $product
      * @param Digitalproduct $digitalProduct
      * @return array
@@ -272,7 +272,7 @@ class DigitalproductOrderShipment extends comOrderShipment
      */
     public function generateSecret($secret = null, $bytes = 40, $check = true)
     {
-        // Allow future customization of secret for custom downloads. 
+        // Allow future customization of secret for custom downloads.
         if (!$secret) {
             // $secret = random_bytes($bytes);
             $secret = bin2hex(openssl_random_pseudo_bytes($bytes));
