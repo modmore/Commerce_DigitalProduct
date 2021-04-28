@@ -1,11 +1,7 @@
 <div class="horizontal field {% if field.hasErrors() %}error{% endif %}">
-    <!-- <label for="{{ field.key }}-{{ field.name }}-resource">{{ field.label }}</label> -->
+    <label for="{{ field.key }}-{{ field.name }}-resource">{{ field.label }}</label>
     {% set idx = 0 %}
     {% for item in field.getValueAsArray() %}
-        {% if idx == 0 %}
-            <h4 class="ui header">{{ lex('commerce_digitalproduct.existing_files') }}</h4>
-        {% endif %}
-
         <div class="two fields">
             <div class="field">
                 {# Makes label only appear before first row, can be taken out if needed. #}
@@ -26,7 +22,6 @@
 
     {# This can be changed if you want more then 1 field appearing at once to add more resources. #}
     {% for i in 1..1 %}
-        <h4 class="ui header">{{ lex('commerce_digitalproduct.add_file') }}</h4>
         <div class="two fields">
             <div class="field">
                 <label for="{{ field.key }}-{{ field.name }}-display_name-{{ idx + i }}">{{ lex('commerce_digitalproduct.resource_display_name') }}</label>
