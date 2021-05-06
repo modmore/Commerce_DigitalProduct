@@ -2,9 +2,10 @@ Digitalproduct for Commerce
 
 This extension is now an official extension for Commerce, maintained by modmore and covered by support. Thank you Tony Klapatch for your hard work on this module before!
 
+- Bump minimum requirements to Commerce 1.2.0-rc3+, MODX 2.7+ and PHP 7.1+
 - Fix digital product information (resource/download links) not being available on the thank you page
 - Digital product download links are now available in order messages as well, same format as for the thank you page
-- Bump minimum requirements to Commerce 1.2.0-rc3+, MODX 2.7+ and PHP 7.1+
+- Switch default engine from MyISAM to InnoDB
 - The "Digitalproduct Product" class is now hidden, with the shipment approach it's no longer needed to use the separate product type
 - Fix incorrect composite relation from Digitalproduct > DigitalproductFile
 - Simplify product form a bit, more logical layout for editing the digital options

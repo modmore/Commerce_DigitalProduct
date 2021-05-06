@@ -108,8 +108,6 @@ $commerce->loadModulesFromDirectory($modulePath, 'modmore\\Commerce_DigitalProdu
 
 $modx->addPackage('commerce_digitalproduct', $componentPath . '/core/components/commerce_digitalproduct/model/');
 $manager = $modx->getManager();
-$generator = $manager->getGenerator();
-$generator->parseSchema($componentPath . '/core/components/commerce_digitalproduct/model/schema/commerce_digitalproduct.mysql.schema.xml', $componentPath . '/core/components/commerce_digitalproduct/model/');
 $manager->createObjectContainer('Digitalproduct');
 $manager->createObjectContainer('DigitalproductFile');
 
