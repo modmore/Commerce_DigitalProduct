@@ -27,24 +27,24 @@ Here is a very basic example which loops through resources and files seperately,
 ```HTML
 <div class="c-digital-products">
     {% for digitalProduct in digitalProducts %}
-
         {% if digitalProduct.resources|length > 0 %}
             <h4>{{ digitalProduct.product.name }} {{ lex('commerce_digitalproduct.pages') }}</h4>
             {% for resource in digitalProduct.resources %}
-                <p><a href="[[~[[++commerce_digitalproduct.download_resource]]]]?secret={{ resource.secret }}">{{ resource.name }}</a></p>
+                <p><a href="[[~[[++commerce_digitalproduct.download_resource]]? &scheme=`full` &secret=`{{ resource.secret }}`]]">{{ resource.name }}</a></p>
             {% endfor %}
         {% endif %}
 
         {% if digitalProduct.files|length > 0 %}
             <h4>{{ digitalProduct.product.name }} {{ lex('commerce_digitalproduct.files') }}</h4>
             {% for file in digitalProduct.files %}
-                <p><a href="[[~[[++commerce_digitalproduct.download_resource]]]]?secret={{ file.secret }}">{{ file.name }}</a></p>
+                <p><a href="[[~[[++commerce_digitalproduct.download_resource]]? &scheme=`full` &secret=`{{ file.secret }}`]]">{{ file.name }}</a></p>
             {% endfor %}
         {% endif %}
-
     {% endfor %}
 </div>
 ```
+
+The same code can also be used in your email templates (e.g. `emails/order-received.twig`) to provide the download links from there.
 
 If you want to use resources, configure the parents to look under for resources in the system setting `commerce_digitalproduct.resource_parents`.
 
