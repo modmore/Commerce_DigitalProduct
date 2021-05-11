@@ -107,7 +107,7 @@ if (is_array($snippets)) {
 
 /* Add chunks */
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding in chunks.');
-$snippets = include $sources['data'] . 'transport.chunks.php';
+$chunks = include $sources['data'] . 'transport.chunks.php';
 if (is_array($chunks)) {
     $category->addMany($chunks);
 } else {
