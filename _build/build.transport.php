@@ -110,7 +110,6 @@ if (is_array($settings)) {
 
 /* Create category */
 $category = $modx->newObject('modCategory');
-$category->set('id', 1);
 $category->set('category', 'Commerce_DigitalProduct');
 
 /* Add snippets */
