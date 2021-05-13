@@ -3,6 +3,7 @@
 namespace modmore\Commerce_DigitalProduct\Modules;
 
 use modmore\Commerce\Events\OrderPlaceholders;
+use modmore\Commerce\Events\MessagePlaceholders;
 use modmore\Commerce\Modules\BaseModule;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use modmore\Commerce\Events\Checkout;
@@ -34,6 +35,7 @@ class Digitalproduct extends BaseModule {
 
         $dispatcher->addListener(\Commerce::EVENT_CHECKOUT_AFTER_STEP, [$this, 'addCheckoutPlaceholders']);
         $dispatcher->addListener(\Commerce::EVENT_ORDER_PLACEHOLDERS, [$this, 'addGetOrderPlaceholders']);
+        $dispatcher->addListener(\Commerce::EVENT_ORDER_MESSAGE_PLACEHOLDERS, [$this, 'addMessagePlaceholders']);
 
         // Add the xPDO package, so Commerce can detect the derivative classes
         $root = dirname(dirname(__DIR__));
@@ -58,8 +60,23 @@ class Digitalproduct extends BaseModule {
             return;
         }
         $step = $event->getStep();
-        $order = $event->getOrder();
 
+        $step->setPlaceholder('digitalProducts', $this->getPlaceholders($event->getOrder()));
+    }
+
+    public function addMessagePlaceholders(MessagePlaceholders $event): void
+    {
+        $event->setPlaceholder('digitalProducts', $this->getPlaceholders($event->getOrder()));
+    }
+
+    public function getModuleConfiguration(\comModule $module)
+    {
+        $fields = [];
+        return $fields;
+    }
+
+    private function getPlaceholders(\comOrder $order)
+    {
         $c = $this->adapter->newQuery(\Digitalproduct::class);
         $c->where([
             'order' => $order->get('id'),
@@ -90,7 +107,7 @@ class Digitalproduct extends BaseModule {
             $output[] = $itemOutput;
         }
 
-        $step->setPlaceholder('digitalProducts', $output);
+        return $output;
     }
 
     public function addGetOrderPlaceholders(OrderPlaceholders $event) {
@@ -121,11 +138,5 @@ class Digitalproduct extends BaseModule {
             $phs[] = $data;
         }
         $event->setPlaceholder('digital_products',$phs);
-    }
-
-    public function getModuleConfiguration(\comModule $module)
-    {
-        $fields = [];
-        return $fields;
     }
 }

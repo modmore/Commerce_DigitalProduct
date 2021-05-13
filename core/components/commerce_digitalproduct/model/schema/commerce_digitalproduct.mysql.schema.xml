@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<model package="commerce_digitalproduct" baseClass="comSimpleObject" platform="mysql" defaultEngine="MyISAM" version="1.1">
+<model package="commerce_digitalproduct" baseClass="comSimpleObject" platform="mysql" defaultEngine="InnoDB" version="1.1">
     <object class="DigitalproductProduct" extends="comProduct" />
     <object class="DigitalproductOrderShipment" extends="comOrderShipment" />
 

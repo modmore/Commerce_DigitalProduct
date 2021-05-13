@@ -29,8 +29,8 @@ if (!defined('MOREPROVIDER_BUILD')) {
     /* define version */
     define('PKG_NAME', 'Commerce_DigitalProduct');
     define('PKG_NAMESPACE', 'commerce_digitalproduct');
-    define('PKG_VERSION', '1.2.1');
-    define('PKG_RELEASE', 'pl');
+    define('PKG_VERSION', '2.0.0');
+    define('PKG_RELEASE', 'rc1');
 
     /* load modx */
     require_once dirname(dirname(__FILE__)) . '/config.core.php';
@@ -75,6 +75,23 @@ $builder->registerNamespace(PKG_NAMESPACE,false,true,'{core_path}components/'.PK
 
 $modx->log(modX::LOG_LEVEL_INFO,'Packaged in namespace.'); flush();
 
+$builder->package->put(
+    array(
+        'source' => $sources['source_core'],
+        'target' => "return MODX_CORE_PATH . 'components/';",
+    ),
+    array(
+        xPDOTransport::ABORT_INSTALL_ON_VEHICLE_FAIL => true,
+        'vehicle_class' => 'xPDOFileVehicle',
+        'validate' => array(
+            array(
+                'type' => 'php',
+                'source' => $sources['validators'] . 'requirements.script.php'
+            )
+        )
+    )
+);
+
 /* Settings */
 $settings = include $sources['data'].'transport.settings.php';
 $attributes= array(
@@ -93,7 +110,6 @@ if (is_array($settings)) {
 
 /* Create category */
 $category = $modx->newObject('modCategory');
-$category->set('id', 1);
 $category->set('category', 'Commerce_DigitalProduct');
 
 /* Add snippets */
@@ -107,24 +123,34 @@ if (is_array($snippets)) {
 
 /* Add chunks */
 $modx->log(modX::LOG_LEVEL_INFO, 'Adding in chunks.');
-$snippets = include $sources['data'] . 'transport.chunks.php';
+$chunks = include $sources['data'] . 'transport.chunks.php';
 if (is_array($chunks)) {
     $category->addMany($chunks);
 } else {
     $modx->log(modX::LOG_LEVEL_FATAL, 'Adding chunks failed.');
 }
 
-// Add the validator to check server requirements
-$vehicle->validate('php', array('source' => $sources['validators'] . 'requirements.script.php'));
+/* create category vehicle */
+$attr = array(
+    xPDOTransport::UNIQUE_KEY => 'category',
+    xPDOTransport::PRESERVE_KEYS => true,
+    xPDOTransport::UPDATE_OBJECT => true,
+    xPDOTransport::RELATED_OBJECTS => true,
+    xPDOTransport::RELATED_OBJECT_ATTRIBUTES => array (
+        'Snippets' => array(
+            xPDOTransport::PRESERVE_KEYS => true,
+            xPDOTransport::UPDATE_OBJECT => true,
+            xPDOTransport::UNIQUE_KEY => 'name',
+        ),
+        'Chunks' => array(
+            xPDOTransport::PRESERVE_KEYS => true,
+            xPDOTransport::UPDATE_OBJECT => true,
+            xPDOTransport::UNIQUE_KEY => 'name',
+        ),
+    ),
+);
 
-//$vehicle->resolve('file',array(
-//    'source' => $sources['source_assets'],
-//    'target' => "return MODX_ASSETS_PATH . 'components/';",
-//));
-$vehicle->resolve('file',array(
-    'source' => $sources['source_core'],
-    'target' => "return MODX_CORE_PATH . 'components/';",
-));
+$vehicle = $builder->createVehicle($category,$attr);
 $vehicle->resolve('php',array(
     'source' => $sources['resolvers'] . 'loadmodules.resolver.php',
 ));
