@@ -69,6 +69,10 @@ class Digitalproduct extends BaseModule {
         $event->setPlaceholder('digitalProducts', $this->getPlaceholders($event->getOrder()));
     }
 
+    public function addGetOrderPlaceholders(OrderPlaceholders $event) {
+        $event->setPlaceholder('digitalProducts', $this->getPlaceholders($event->getOrder()));
+    }
+
     public function getModuleConfiguration(\comModule $module)
     {
         $fields = [];
@@ -108,35 +112,5 @@ class Digitalproduct extends BaseModule {
         }
 
         return $output;
-    }
-
-    public function addGetOrderPlaceholders(OrderPlaceholders $event) {
-        $order = $event->getOrder();
-
-        // If there are no digital products, we can stop here.
-        if(!$order->getProperty('has_digital_products')) {
-            return;
-        }
-
-        $c = $this->adapter->newQuery(\Digitalproduct::class);
-        $c->where([
-            'order' => $order->get('id'),
-        ]);
-
-        /** @var \Digitalproduct[] $digitalProducts */
-        $digitalProducts = $this->adapter->getIterator(\Digitalproduct::class, $c);
-        $phs = [];
-        foreach ($digitalProducts as $digitalProduct) {
-
-            $data = $digitalProduct->toArray();
-
-            /** @var \DigitalproductFile[] $files */
-            $files = $digitalProduct->getMany('File');
-            foreach ($files as $file) {
-                $data['files'][] = $file->toArray();
-            }
-            $phs[] = $data;
-        }
-        $event->setPlaceholder('digital_products',$phs);
     }
 }
