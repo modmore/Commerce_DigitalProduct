@@ -2,6 +2,7 @@
 
 namespace modmore\Commerce_DigitalProduct\Modules;
 
+use modmore\Commerce\Events\OrderPlaceholders;
 use modmore\Commerce\Modules\BaseModule;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use modmore\Commerce\Events\Checkout;
@@ -32,6 +33,7 @@ class Digitalproduct extends BaseModule {
         $this->adapter->loadLexicon('commerce_digitalproduct:default');
 
         $dispatcher->addListener(\Commerce::EVENT_CHECKOUT_AFTER_STEP, [$this, 'addCheckoutPlaceholders']);
+        $dispatcher->addListener(\Commerce::EVENT_ORDER_PLACEHOLDERS, [$this, 'addGetOrderPlaceholders']);
 
         // Add the xPDO package, so Commerce can detect the derivative classes
         $root = dirname(dirname(__DIR__));
@@ -89,6 +91,36 @@ class Digitalproduct extends BaseModule {
         }
 
         $step->setPlaceholder('digitalProducts', $output);
+    }
+
+    public function addGetOrderPlaceholders(OrderPlaceholders $event) {
+        $order = $event->getOrder();
+
+        // If there are no digital products, we can stop here.
+        if(!$order->getProperty('has_digital_products')) {
+            return;
+        }
+
+        $c = $this->adapter->newQuery(\Digitalproduct::class);
+        $c->where([
+            'order' => $order->get('id'),
+        ]);
+
+        /** @var \Digitalproduct[] $digitalProducts */
+        $digitalProducts = $this->adapter->getIterator(\Digitalproduct::class, $c);
+        $phs = [];
+        foreach ($digitalProducts as $digitalProduct) {
+
+            $data = $digitalProduct->toArray();
+
+            /** @var \DigitalproductFile[] $files */
+            $files = $digitalProduct->getMany('File');
+            foreach ($files as $file) {
+                $data['files'][] = $file->toArray();
+            }
+            $phs[] = $data;
+        }
+        $event->setPlaceholder('digital_products',$phs);
     }
 
     public function getModuleConfiguration(\comModule $module)
