@@ -34,8 +34,11 @@ class Digitalproduct extends BaseModule {
         $this->adapter->loadLexicon('commerce_digitalproduct:default');
 
         $dispatcher->addListener(\Commerce::EVENT_CHECKOUT_AFTER_STEP, [$this, 'addCheckoutPlaceholders']);
-        $dispatcher->addListener(\Commerce::EVENT_ORDER_PLACEHOLDERS, [$this, 'addGetOrderPlaceholders']);
         $dispatcher->addListener(\Commerce::EVENT_ORDER_MESSAGE_PLACEHOLDERS, [$this, 'addMessagePlaceholders']);
+        // Check if the event exists (Requires Commerce 1.3+)
+        if(defined('\Commerce::EVENT_ORDER_PLACEHOLDERS')) {
+            $dispatcher->addListener(\Commerce::EVENT_ORDER_PLACEHOLDERS, [$this, 'addGetOrderPlaceholders']);
+        }
 
         // Add the xPDO package, so Commerce can detect the derivative classes
         $root = dirname(dirname(__DIR__));
@@ -69,7 +72,8 @@ class Digitalproduct extends BaseModule {
         $event->setPlaceholder('digitalProducts', $this->getPlaceholders($event->getOrder()));
     }
 
-    public function addGetOrderPlaceholders(OrderPlaceholders $event) {
+    public function addGetOrderPlaceholders(OrderPlaceholders $event): void
+    {
         $event->setPlaceholder('digitalProducts', $this->getPlaceholders($event->getOrder()));
     }
 
