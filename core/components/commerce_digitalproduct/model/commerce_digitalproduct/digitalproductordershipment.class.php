@@ -131,6 +131,11 @@ class DigitalproductOrderShipment extends comOrderShipment
 
             $product = $orderItem->getProduct();
 
+            // Joins the user to the product's usergroup if they are logged in
+            if ($user && $product->getProperty('usergroup')) {
+                $user->joinGroup((int)$product->getProperty('usergroup'));
+            }
+
             // Add the product to the digitalproduct table for tracking
             /** @var Digitalproduct $digitalProduct */
             $digitalProduct = $this->adapter->newObject('Digitalproduct', [
@@ -152,11 +157,6 @@ class DigitalproductOrderShipment extends comOrderShipment
                 'all' => $all,
                 'product' => $product->toArray()
             ];
-
-            // Joins the user to the product's usergroup if they are logged in
-            if ($user && $product->getProperty('usergroup')) {
-                $user->joinGroup((int)$product->getProperty('usergroup'));
-            }
         }
 
         return $output;
