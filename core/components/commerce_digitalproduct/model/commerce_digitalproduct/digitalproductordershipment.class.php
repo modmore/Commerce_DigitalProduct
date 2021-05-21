@@ -176,7 +176,7 @@ class DigitalproductOrderShipment extends comOrderShipment
 
         foreach ((array)$resources as $resource) {
             if ($resource) {
-                $page = $this->adapter->getObject('modResource', $resource);
+                $page = $this->adapter->getObject('modResource', (int)$resource);
 
                 if (!$page) {
                     $this->adapter->log(1, '[Digitalproduct] Could not find resource with ID of ' . $resource);
