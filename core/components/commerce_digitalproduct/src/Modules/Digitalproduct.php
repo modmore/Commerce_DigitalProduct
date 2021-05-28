@@ -2,6 +2,7 @@
 
 namespace modmore\Commerce_DigitalProduct\Modules;
 
+use modmore\Commerce\Events\OrderPlaceholders;
 use modmore\Commerce\Events\MessagePlaceholders;
 use modmore\Commerce\Modules\BaseModule;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -34,6 +35,10 @@ class Digitalproduct extends BaseModule {
 
         $dispatcher->addListener(\Commerce::EVENT_CHECKOUT_AFTER_STEP, [$this, 'addCheckoutPlaceholders']);
         $dispatcher->addListener(\Commerce::EVENT_ORDER_MESSAGE_PLACEHOLDERS, [$this, 'addMessagePlaceholders']);
+        // Check if the event exists (Requires Commerce 1.3+)
+        if(defined('\Commerce::EVENT_ORDER_PLACEHOLDERS')) {
+            $dispatcher->addListener(\Commerce::EVENT_ORDER_PLACEHOLDERS, [$this, 'addGetOrderPlaceholders']);
+        }
 
         // Add the xPDO package, so Commerce can detect the derivative classes
         $root = dirname(dirname(__DIR__));
@@ -63,6 +68,11 @@ class Digitalproduct extends BaseModule {
     }
 
     public function addMessagePlaceholders(MessagePlaceholders $event): void
+    {
+        $event->setPlaceholder('digitalProducts', $this->getPlaceholders($event->getOrder()));
+    }
+
+    public function addGetOrderPlaceholders(OrderPlaceholders $event): void
     {
         $event->setPlaceholder('digitalProducts', $this->getPlaceholders($event->getOrder()));
     }
