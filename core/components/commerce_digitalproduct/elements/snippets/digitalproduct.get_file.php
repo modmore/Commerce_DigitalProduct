@@ -21,7 +21,7 @@ if (empty($secret)) {
 }
 
 // Initialize digital product service
-$service = $modx->getService('digitalproductservice', 'DigitalproductService', $modx->getOption('commerce_digitalproduct.core_path', null, $modx->getOption('core_path') . 'components/commerce_digitalproduct/') . 'model/commerce_digitalproduct/', $scriptProperties);
+$service = $modx->getService('digitalproductservice', 'DigitalproductService', $modx->getOption('commerce_digitalproduct.core_path', null, $modx->getOption('core_path') . 'components/commerce_digitalproduct/') . 'model/commerce_digitalproduct/');
 if (!($service instanceof DigitalproductService)) return '';
 
 // Try to get a file with the secret
