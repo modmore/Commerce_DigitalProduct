@@ -78,4 +78,27 @@ class Digitalproduct extends comSimpleObject
         return $this->_user;
     }
 
+    public function getPlaceholders(): array
+    {
+        $product = $this->getProduct();
+        $itemOutput =  [
+            'all' => [],
+            'resources' => [],
+            'files' => [],
+            'product' => $product ? $product->toArray() : [],
+        ];
+
+        /** @var \DigitalproductFile[] $files */
+        $files = $this->getMany('File');
+        foreach ($files as $file) {
+            $url = $file->get('url');
+            $data = $file->toArray();
+
+            $itemOutput[ is_numeric($url) ? 'resources' : 'files' ][] = $data;
+            $itemOutput['all'][] = $data;
+        }
+
+        return $itemOutput;
+    }
+
 }

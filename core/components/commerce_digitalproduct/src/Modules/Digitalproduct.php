@@ -35,13 +35,13 @@ class Digitalproduct extends BaseModule {
 
         $dispatcher->addListener(\Commerce::EVENT_CHECKOUT_AFTER_STEP, [$this, 'addCheckoutPlaceholders']);
         $dispatcher->addListener(\Commerce::EVENT_ORDER_MESSAGE_PLACEHOLDERS, [$this, 'addMessagePlaceholders']);
-        // Check if the event exists (Requires Commerce 1.3+)
-        if(defined('\Commerce::EVENT_ORDER_PLACEHOLDERS')) {
+        // Check if we're on Commerce 1.3+ to add placeholders to the get_order(s) snippet
+        if (defined('\Commerce::EVENT_ORDER_PLACEHOLDERS')) {
             $dispatcher->addListener(\Commerce::EVENT_ORDER_PLACEHOLDERS, [$this, 'addGetOrderPlaceholders']);
         }
 
         // Add the xPDO package, so Commerce can detect the derivative classes
-        $root = dirname(dirname(__DIR__));
+        $root = dirname(__DIR__, 2);
         $path = $root . '/model/';
         $this->adapter->loadPackage('commerce_digitalproduct', $path);
 
@@ -51,6 +51,7 @@ class Digitalproduct extends BaseModule {
         // Load model class for access to static methods.
         $this->adapter->loadClass('DigitalproductOrderShipment', $path . 'commerce_digitalproduct/');
     }
+
     /**
      * Add placeholders to checkout for templating
      *
@@ -67,23 +68,27 @@ class Digitalproduct extends BaseModule {
         $step->setPlaceholder('digitalProducts', $this->getPlaceholders($event->getOrder()));
     }
 
+    /**
+     * Add same placeholders to order messages
+     *
+     * @param MessagePlaceholders $event
+     */
     public function addMessagePlaceholders(MessagePlaceholders $event): void
     {
         $event->setPlaceholder('digitalProducts', $this->getPlaceholders($event->getOrder()));
     }
 
+    /**
+     * Add same placeholders to the commerce.get_order(s) snippet output (in Commerce v1.3+)
+     *
+     * @param OrderPlaceholders $event
+     */
     public function addGetOrderPlaceholders(OrderPlaceholders $event): void
     {
         $event->setPlaceholder('digitalProducts', $this->getPlaceholders($event->getOrder()));
     }
 
-    public function getModuleConfiguration(\comModule $module)
-    {
-        $fields = [];
-        return $fields;
-    }
-
-    private function getPlaceholders(\comOrder $order)
+    private function getPlaceholders(\comOrder $order): array
     {
         $c = $this->adapter->newQuery(\Digitalproduct::class);
         $c->where([
@@ -93,26 +98,10 @@ class Digitalproduct extends BaseModule {
 
         $output = [];
 
+        /** @var \Digitalproduct[] $items */
         $items = $this->adapter->getIterator(\Digitalproduct::class, $c);
         foreach ($items as $item) {
-            $product = $item->getProduct();
-            $itemOutput =  [
-                'all' => [],
-                'resources' => [],
-                'files' => [],
-                'product' => $product ? $product->toArray() : [],
-            ];
-            /** @var \DigitalproductFile[] $files */
-            $files = $item->getMany('File');
-            foreach ($files as $file) {
-                $url = $file->get('url');
-                $data = $file->toArray();
-
-                $itemOutput[ is_numeric($url) ? 'resources' : 'files' ][] = $data;
-                $itemOutput['all'][] = $data;
-            }
-
-            $output[] = $itemOutput;
+            $output[] = $item->getPlaceholders();
         }
 
         return $output;
