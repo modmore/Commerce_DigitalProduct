@@ -1,4 +1,6 @@
-Digitalproduct for Commerce
+DigitalProduct for Commerce 2.0.0-pl
+------------------------------------
+Released on 2022-01-31
 
 This extension is now an official extension for Commerce, maintained by modmore and covered by support. Thank you Tony Klapatch for your hard work on this module before!
 
@@ -16,28 +18,38 @@ Fixes:
 - The "Digitalproduct Product" class is now hidden, with the shipment approach it's no longer needed to use the separate product type
 - Fix incorrect composite relation from Digitalproduct > DigitalproductFile
 
-1.2.1-pl released on 5/21/2019
-==============
+DigitalProduct for Commerce 1.2.1-pl
+------------------------------------
+Released on 2019-05-21
+
 - Fix fatal error when an item does not have a delivery type (thanks Mark)
 
-1.2.0-pl Released on 3/15/2019
-==============
+DigitalProduct for Commerce 1.2.0-pl
+------------------------------------
+Released on 2019-03-15
+
 - Fix tables not being created during installation
 - Now using the EVENT_ORDER_PAYMENT_RECEIVED event to add Digital products to a user instead of on the ThankYou page (enables usage of non-instant payment methods)
 - Checkout placeholders now set to tell which items in the cart are digital for theming
 
-1.1.0-pl Released on 12/19/2018
-==============
+DigitalProduct for Commerce 1.1.0-pl
+------------------------------------
+Released on 2018-12-19
+
 - Move custom product fields to shipment (can use your own custom product)
 - Add getUserFiles method on service class for future snippet
 - Fix 0 download limit not giving unlimited downloads
 - Use new empty option for user group SelectField (requires Commerce 0.11.4 or higher)
 - Fix download method lexican
 
-1.0.0-pl Released on 7/30/2018
-==============
+DigitalProduct for Commerce 1.0.0-pl
+------------------------------------
+Released on 2018-07-30
+
 - First public release
 
-1.0.0-dev Released on 7/19/2018
-==============
+DigitalProduct for Commerce 1.0.0-dev
+-------------------------------------
+Released on 2018-07-19
+
 - First dev release
