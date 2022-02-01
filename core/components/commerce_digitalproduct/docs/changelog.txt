@@ -1,6 +1,6 @@
 DigitalProduct for Commerce 2.0.0-pl
 ------------------------------------
-Released on 2022-01-31
+Released on 2022-02-01
 
 This extension is now an official extension for Commerce, maintained by modmore and covered by support. Thank you Tony Klapatch for your hard work on this module before!
 
