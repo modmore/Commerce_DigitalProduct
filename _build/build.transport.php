@@ -30,7 +30,7 @@ if (!defined('MOREPROVIDER_BUILD')) {
     define('PKG_NAME', 'Commerce_DigitalProduct');
     define('PKG_NAMESPACE', 'commerce_digitalproduct');
     define('PKG_VERSION', '2.0.0');
-    define('PKG_RELEASE', 'rc1');
+    define('PKG_RELEASE', 'pl');
 
     /* load modx */
     require_once dirname(dirname(__FILE__)) . '/config.core.php';
