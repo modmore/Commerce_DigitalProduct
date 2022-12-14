@@ -125,7 +125,7 @@ class DigitalproductOrderShipment extends comOrderShipment
         foreach ($orderItems as $orderItem) {
             // Determine if item is a digital product
             $deliveryType = $orderItem->getOne('DeliveryType');
-            if ($deliveryType->get('shipment_type') !== 'DigitalproductOrderShipment') {
+            if (!$deliveryType || $deliveryType->get('shipment_type') !== 'DigitalproductOrderShipment') {
                 continue;
             }
 
