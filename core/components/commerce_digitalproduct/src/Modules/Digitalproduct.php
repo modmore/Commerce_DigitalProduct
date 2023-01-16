@@ -5,7 +5,7 @@ namespace modmore\Commerce_DigitalProduct\Modules;
 use modmore\Commerce\Events\OrderPlaceholders;
 use modmore\Commerce\Events\MessagePlaceholders;
 use modmore\Commerce\Modules\BaseModule;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use modmore\Commerce\Dispatcher\EventDispatcher;
 use modmore\Commerce\Events\Checkout;
 
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
