@@ -88,6 +88,30 @@ foreach ($settings as $key => $opts) {
     }
 }
 
+// Create snippets
+if (!createObject('modSnippet', [
+    'name' => 'digitalproduct.get_file',
+    'static' => true,
+    'static_file' => $componentPath . '/core/components/commerce_digitalproduct/elements/snippets/digitalproduct.get_file.php',
+], 'name', false)) {
+    echo "Error creating digitalproduct.get_file snippet.\n";
+}
+if (!createObject('modSnippet', [
+    'name' => 'digitalproduct.get_user_files',
+    'static' => true,
+    'static_file' => $componentPath . '/core/components/commerce_digitalproduct/elements/snippets/digitalproduct.get_user_files.php',
+], 'name', false)) {
+    echo "Error creating digitalproduct.get_user_files snippet.\n";
+}
+
+// Create chunks
+if (!createObject('modChunk', [
+    'name' => 'digitalproduct.get_file',
+    'static' => true,
+    'static_file' => $componentPath . '/core/components/commerce_digitalproduct/elements/chunks/digitalproduct.file_error.tpl',
+], 'name', false)) {
+    echo "Error creating digitalproduct.file_error chunk.\n";
+}
 
 $path = $modx->getOption('commerce.core_path', null, MODX_CORE_PATH . 'components/commerce/') . 'model/commerce/';
 $params = ['mode' => $modx->getOption('commerce.mode')];
