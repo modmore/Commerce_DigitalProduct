@@ -23,6 +23,7 @@ $xpdo_meta_map['Digitalproduct']= array (
   array (
     'order' => 0,
     'product' => 0,
+    'bundle' => 0,
     'user' => 0,
   ),
   'fieldMeta' => 
@@ -37,6 +38,15 @@ $xpdo_meta_map['Digitalproduct']= array (
       'default' => 0,
     ),
     'product' => 
+    array (
+      'dbtype' => 'int',
+      'attributes' => 'unsigned',
+      'precision' => '10',
+      'phptype' => 'int',
+      'null' => false,
+      'default' => 0,
+    ),
+    'bundle' =>
     array (
       'dbtype' => 'int',
       'attributes' => 'unsigned',

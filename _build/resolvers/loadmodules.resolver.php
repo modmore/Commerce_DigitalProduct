@@ -27,6 +27,9 @@ if ($object->xpdo) {
             $manager->createObjectContainer('Digitalproduct');
             $manager->createObjectContainer('DigitalproductFile');
 
+            // Version 2.1.0 - added support for product bundles
+            $manager->addField('DigitalProduct', 'bundle', ['after' => 'product']);
+
             // Load the module
             $modx->log(modX::LOG_LEVEL_INFO, 'Loading/updating available modules...');
             if ($commerce instanceof Commerce) {

@@ -7,6 +7,7 @@
     <object class="Digitalproduct" table="commerce_digitalproduct" extends="comSimpleObject">
         <field key="order" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" default="0" />
         <field key="product" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" default="0" />
+        <field key="bundle" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" default="0" />
         <field key="user" dbtype="int" attributes="unsigned" precision="10" phptype="int" null="false" default="0" />
 
         <aggregate alias="Order" class="comOrder" local="order" foreign="id" cardinality="one" owner="foreign" />

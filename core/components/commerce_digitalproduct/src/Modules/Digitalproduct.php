@@ -94,12 +94,11 @@ class Digitalproduct extends BaseModule {
         $c->where([
             'order' => $order->get('id'),
         ]);
-        /** @var \Digitalproduct[] $items */
-
-        $output = [];
 
         /** @var \Digitalproduct[] $items */
         $items = $this->adapter->getIterator(\Digitalproduct::class, $c);
+
+        $output = [];
         foreach ($items as $item) {
             $output[] = $item->getPlaceholders();
         }

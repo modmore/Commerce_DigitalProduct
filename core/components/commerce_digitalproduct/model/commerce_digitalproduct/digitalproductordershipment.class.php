@@ -102,7 +102,7 @@ class DigitalproductOrderShipment extends comOrderShipment
     public function onOrderStateProcessing()
     {
         $order = $this->getOrder();
-        $this->processDigitalProducts($order);
+        $this->filterDigitalProducts($order);
 
         $order->setProperty('has_digital_products', true);
         $order->save();
@@ -116,7 +116,7 @@ class DigitalproductOrderShipment extends comOrderShipment
      * @param comOrder $order
      * @return array
      */
-    private function processDigitalProducts($order)
+    private function filterDigitalProducts(comOrder $order): array
     {
         $output = [];
         $orderItems = $order->getItems();
@@ -131,35 +131,66 @@ class DigitalproductOrderShipment extends comOrderShipment
 
             $product = $orderItem->getProduct();
 
-            // Joins the user to the product's usergroup if they are logged in
-            if ($user && $product->getProperty('usergroup')) {
-                $user->joinGroup((int)$product->getProperty('usergroup'));
+            // Check if this product is a bundle
+            if ($product->get('class_key') === 'comProductBundle') {
+                $bundleProducts = $product->getProducts();
+                // Treat each product that's part of the bundle as a separate digital product
+                foreach ($bundleProducts as $bundleProduct) {
+                    $output[] = $this->processDigitalProduct($bundleProduct, $order, $user);
+                }
+                continue;
             }
 
-            // Add the product to the digitalproduct table for tracking
-            /** @var Digitalproduct $digitalProduct */
-            $digitalProduct = $this->adapter->newObject('Digitalproduct', [
-                'order' => $order->get('id'),
-                'product' => $product->get('id'),
-                'user' => $order->get('user'),
-            ]);
-            $digitalProduct->save();
-
-            // Get the digital items
-            $resources = $this->getDigitalProductResources($product, $digitalProduct);
-            $files = $this->getDigitalProductFiles($product, $digitalProduct);
-            $all = array_merge($resources, $files);
-
-            // In twig, you can see which by checking for an empty array.
-            $output[] = [
-                'resources' => $resources,
-                'files' => $files,
-                'all' => $all,
-                'product' => $product->toArray()
-            ];
+            // Process non-bundle products
+            $output[] = $this->processDigitalProduct($product, $order, $user);
         }
 
         return $output;
+    }
+
+    /**
+     * @param comProduct|comProductBundleProduct $product
+     * - comProductBundleProduct is extended directly from comSimpleObject (no type hint until PHP 8)
+     * @param comOrder $order
+     * @param modUser|null $user
+     * @return array
+     */
+    private function processDigitalProduct($product, comOrder $order, modUser $user = null): array
+    {
+        // Joins the user to the product's usergroup if they are logged in
+        if ($user && $product->getProperty('usergroup')) {
+            $user->joinGroup((int)$product->getProperty('usergroup'));
+        }
+
+        $values = [
+            'order' => $order->get('id'),
+            'product' => $product->get('id'),
+            'user' => $order->get('user'),
+        ];
+        if ($product->get('class_key') === 'comProductBundleProduct') {
+            $values['product'] = $product->get('product');
+            $values['bundle'] = $product->get('bundle');
+
+            $product = $product->getProduct();
+        }
+
+        // Add the product to the digitalproduct table for tracking
+        /** @var Digitalproduct $digitalProduct */
+        $digitalProduct = $this->adapter->newObject('Digitalproduct', $values);
+        $digitalProduct->save();
+
+        // Get the digital items
+        $resources = $this->getDigitalProductResources($product, $digitalProduct);
+        $files = $this->getDigitalProductFiles($product, $digitalProduct);
+        $all = array_merge($resources, $files);
+
+        // In twig, you can see which by checking for an empty array.
+        return [
+            'resources' => $resources,
+            'files' => $files,
+            'all' => $all,
+            'product' => $product->toArray()
+        ];
     }
 
     /**
