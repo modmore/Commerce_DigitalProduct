@@ -1,3 +1,9 @@
+DigitalProduct for Commerce 2.1.0-pl
+------------------------------------
+Released on 2023-10-05
+
+- Digital products can now be added to product bundles [8757fc6]
+
 DigitalProduct for Commerce 2.0.1-pl
 ------------------------------------
 Released on 2022-12-14

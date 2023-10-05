@@ -1,15 +1,19 @@
 <?php
-/* @var modX $modx */
+/**
+ * @var modX $modx
+ * @var array $options
+ */
 
-if ($object->xpdo) {
+if (isset($object) && $object->xpdo) {
     switch ($options[xPDOTransport::PACKAGE_ACTION]) {
         case xPDOTransport::ACTION_UPGRADE:
         case xPDOTransport::ACTION_INSTALL:
             $modx =& $object->xpdo;
 
+            $logLevel = $modx->setLogLevel(modX::LOG_LEVEL_ERROR);
+
             $corePath = $modx->getOption('commerce.core_path', null, $modx->getOption('core_path') . 'components/commerce/');
             $commerce = $modx->getService('commerce', 'Commerce', $corePath . 'model/commerce/' , ['isSetup' => true]);
-
 
             // Update the v1.1- module, if it exists
             $oldModule = $modx->getObject('comModule', ['class_name' => 'RogueClarity\Digitalproduct\Modules\Digitalproduct']);
@@ -27,8 +31,14 @@ if ($object->xpdo) {
             $manager->createObjectContainer('Digitalproduct');
             $manager->createObjectContainer('DigitalproductFile');
 
+            // For database updates, we only want absolutely fatal errors.
+            $modx->setLogLevel(modX::LOG_LEVEL_FATAL);
+
             // Version 2.1.0 - added support for product bundles
             $manager->addField('DigitalProduct', 'bundle', ['after' => 'product']);
+
+            // Return log level to normal.
+            $modx->setLogLevel($logLevel);
 
             // Load the module
             $modx->log(modX::LOG_LEVEL_INFO, 'Loading/updating available modules...');
