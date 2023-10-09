@@ -1,5 +1,6 @@
 <?php
 
+use modmore\Commerce\Adapter\AdapterInterface;
 use modmore\Commerce\Admin\Widgets\Form\NumberField;
 use modmore\Commerce\Admin\Widgets\Form\SelectField;
 use modmore\Commerce_DigitalProduct\Admin\Widgets\Form\ResourceField;
@@ -20,6 +21,11 @@ class DigitalproductOrderShipment extends comOrderShipment
     public static function getFieldsForProduct(Commerce $commerce, comProduct $product, comDeliveryType $deliveryType)
     {
         $fields = [];
+
+        // Don't show digital product fields on the bundle object itself
+        if ($product instanceof comProductBundle) {
+            return [];
+        }
 
         $fields[] = new SelectField($commerce, [
             'label' => $commerce->adapter->lexicon('commerce_digitalproduct.user_group'),
@@ -136,13 +142,13 @@ class DigitalproductOrderShipment extends comOrderShipment
                 $bundleProducts = $product->getProducts();
                 // Treat each product that's part of the bundle as a separate digital product
                 foreach ($bundleProducts as $bundleProduct) {
-                    $output[] = $this->processDigitalProduct($bundleProduct, $order, $user);
+                    $output[] = $this->processDigitalProduct($this->adapter, $bundleProduct, $order, $user);
                 }
                 continue;
             }
 
             // Process non-bundle products
-            $output[] = $this->processDigitalProduct($product, $order, $user);
+            $output[] = $this->processDigitalProduct($this->adapter, $product, $order, $user);
         }
 
         return $output;
@@ -155,7 +161,7 @@ class DigitalproductOrderShipment extends comOrderShipment
      * @param modUser|null $user
      * @return array
      */
-    private function processDigitalProduct($product, comOrder $order, modUser $user = null): array
+    public static function processDigitalProduct(AdapterInterface $adapter, $product, comOrder $order, modUser $user = null): array
     {
         // Joins the user to the product's usergroup if they are logged in
         if ($user && $product->getProperty('usergroup')) {
@@ -176,12 +182,12 @@ class DigitalproductOrderShipment extends comOrderShipment
 
         // Add the product to the digitalproduct table for tracking
         /** @var Digitalproduct $digitalProduct */
-        $digitalProduct = $this->adapter->newObject('Digitalproduct', $values);
+        $digitalProduct = $adapter->newObject('Digitalproduct', $values);
         $digitalProduct->save();
 
         // Get the digital items
-        $resources = $this->getDigitalProductResources($product, $digitalProduct);
-        $files = $this->getDigitalProductFiles($product, $digitalProduct);
+        $resources = self::getDigitalProductResources($adapter, $product, $digitalProduct);
+        $files = self::getDigitalProductFiles($adapter, $product, $digitalProduct);
         $all = array_merge($resources, $files);
 
         // In twig, you can see which by checking for an empty array.
@@ -200,28 +206,28 @@ class DigitalproductOrderShipment extends comOrderShipment
      * @param Digitalproduct $digitalProduct
      * @return array
      */
-    private function getDigitalProductResources($product, $digitalProduct)
+    private static function getDigitalProductResources(AdapterInterface $adapter, $product, $digitalProduct)
     {
         $output = [];
         $resources = $product->getProperty('resources');
 
         foreach ((array)$resources as $resource) {
             if ($resource) {
-                $page = $this->adapter->getObject('modResource', (int)$resource);
+                $page = $adapter->getObject('modResource', (int)$resource);
 
                 if (!$page) {
-                    $this->adapter->log(1, '[Digitalproduct] Could not find resource with ID of ' . $resource);
+                    $adapter->log(1, '[Digitalproduct] Could not find resource with ID of ' . $resource);
                     continue;
                 }
 
-                $digitalProductFile = $this->adapter->newObject('DigitalproductFile', [
+                $digitalProductFile = $adapter->newObject('DigitalproductFile', [
                     'digitalproduct_id' => $digitalProduct->get('id'),
                     'name' => $page->get('pagetitle'), //@todo, make custom setting. Maybe let it be set by TV?
                     'file' => $page->get('id'),
                     'download_method' => $product->getProperty('download_method'),
-                    'download_expiry' => $this->getDownloadExpiry($product),
-                    'download_limit' => $this->getDownloadLimit($product),
-                    'secret' => $this->generateSecret()
+                    'download_expiry' => self::getDownloadExpiry($adapter, $product),
+                    'download_limit' => self::getDownloadLimit($adapter, $product),
+                    'secret' => self::generateSecret($adapter)
                 ]);
                 $digitalProductFile->save();
 
@@ -239,7 +245,7 @@ class DigitalproductOrderShipment extends comOrderShipment
      * @param Digitalproduct $digitalProduct
      * @return array
      */
-    private function getDigitalProductFiles($product, $digitalProduct)
+    private static function getDigitalProductFiles(AdapterInterface $adapter, $product, $digitalProduct)
     {
         $output = [];
         $files = $product->getProperty('files');
@@ -251,14 +257,14 @@ class DigitalproductOrderShipment extends comOrderShipment
                     'url' => $file['url']
                 ];
 
-                $digitalProductFile = $this->adapter->newObject('DigitalproductFile', [
+                $digitalProductFile = $adapter->newObject('DigitalproductFile', [
                     'digitalproduct_id' => $digitalProduct->get('id'),
                     'name' => $file['display_name'],
                     'file' => $file['url'],
                     'download_method' => $product->getProperty('download_method'),
-                    'download_expiry' => $this->getDownloadExpiry($product),
-                    'download_limit' => $this->getDownloadLimit($product),
-                    'secret' => $this->generateSecret()
+                    'download_expiry' => self::getDownloadExpiry($adapter, $product),
+                    'download_limit' => self::getDownloadLimit($adapter, $product),
+                    'secret' => self::generateSecret($adapter)
                 ]);
                 $digitalProductFile->save();
 
@@ -275,7 +281,7 @@ class DigitalproductOrderShipment extends comOrderShipment
      * @param comProduct $product
      * @return int
      */
-    public function getDownloadExpiry($product)
+    public static function getDownloadExpiry(AdapterInterface $adapter, $product)
     {
         $expiration = $product->getProperty('download_expiry');
         return $expiration ? strtotime($expiration) : 0;
@@ -287,7 +293,7 @@ class DigitalproductOrderShipment extends comOrderShipment
      * @param comProduct $product
      * @return int
      */
-    public function getDownloadLimit($product)
+    public static function getDownloadLimit(AdapterInterface $adapter, $product)
     {
         $limit = $product->getProperty('download_limit');
         return $limit ? : 0;
@@ -298,7 +304,7 @@ class DigitalproductOrderShipment extends comOrderShipment
      *
      * @return string
      */
-    public function generateSecret($secret = null, $bytes = 40, $check = true)
+    public static function generateSecret(AdapterInterface $adapter, $secret = null, $bytes = 40, $check = true)
     {
         // Allow future customization of secret for custom downloads.
         if (!$secret) {
@@ -306,11 +312,11 @@ class DigitalproductOrderShipment extends comOrderShipment
         }
         // Check to ensure random generated string has not been used before
         if ($check) {
-            $query = $this->adapter->getObject('DigitalproductFile', ['secret' => $secret]);
+            $query = $adapter->getObject('DigitalproductFile', ['secret' => $secret]);
 
             if ($query) {
                 // Generate a new one if it is being used.
-                $secret = $this->generateSecret($bytes, $check);
+                $secret = self::generateSecret($bytes, $check);
             }
         }
 

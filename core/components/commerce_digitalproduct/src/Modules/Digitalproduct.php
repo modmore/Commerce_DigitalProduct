@@ -4,6 +4,7 @@ namespace modmore\Commerce_DigitalProduct\Modules;
 
 use modmore\Commerce\Events\OrderPlaceholders;
 use modmore\Commerce\Events\MessagePlaceholders;
+use modmore\Commerce\Events\OrderState;
 use modmore\Commerce\Modules\BaseModule;
 use modmore\Commerce\Dispatcher\EventDispatcher;
 use modmore\Commerce\Events\Checkout;
@@ -33,6 +34,7 @@ class Digitalproduct extends BaseModule {
         // Load our lexicon
         $this->adapter->loadLexicon('commerce_digitalproduct:default');
 
+        $dispatcher->addListener(\Commerce::EVENT_STATE_CART_TO_PROCESSING, [$this, 'processDigitalDeliveryType']);
         $dispatcher->addListener(\Commerce::EVENT_CHECKOUT_AFTER_STEP, [$this, 'addCheckoutPlaceholders']);
         $dispatcher->addListener(\Commerce::EVENT_ORDER_MESSAGE_PLACEHOLDERS, [$this, 'addMessagePlaceholders']);
         // Check if we're on Commerce 1.3+ to add placeholders to the get_order(s) snippet
@@ -50,6 +52,38 @@ class Digitalproduct extends BaseModule {
 
         // Load model class for access to static methods.
         $this->adapter->loadClass('DigitalproductOrderShipment', $path . 'commerce_digitalproduct/');
+
+        // Commerce core doesn't load comProductBundle in the service class, but we need to extend it, so do that here.
+        $this->adapter->loadClass('comProductBundle', $this->commerce->config['model_path'] . 'commerce/');
+    }
+
+    public function processDigitalDeliveryType(OrderState $event)
+    {
+        $order = $event->getOrder();
+        $items = $order->getItems();
+        foreach ($items as $item) {
+            $product = $item->getProduct();
+            if (!$product instanceof \DigitalProductBundle) {
+                continue;
+            }
+
+            $secondaryDeliveryTypeId = $product->getProperty('digital_bundle_delivery_type');
+            if (empty($secondaryDeliveryTypeId)) {
+                continue;
+            }
+
+            $secondaryDeliveryType = $this->adapter->getObject('comDeliveryType', [
+                'id' => $secondaryDeliveryTypeId,
+                'shipment_type' => 'DigitalproductOrderShipment',
+            ]);
+            if (!$secondaryDeliveryType) {
+                continue;
+            }
+
+            foreach ($product->getProducts() as $bundledProduct) {
+                \DigitalproductOrderShipment::processDigitalProduct($this->adapter, $bundledProduct, $order, $order->getUser());
+            }
+        }
     }
 
     /**
@@ -64,7 +98,6 @@ class Digitalproduct extends BaseModule {
             return;
         }
         $step = $event->getStep();
-
         $step->setPlaceholder('digitalProducts', $this->getPlaceholders($event->getOrder()));
     }
 

@@ -1,8 +1,5 @@
 <?php
 
-use modmore\Commerce\Admin\Widgets\Form\TextField;
-use modmore\Commerce\Admin\Widgets\Form\Tab;
-
 /**
  * Digitalproduct for Commerce.
  *

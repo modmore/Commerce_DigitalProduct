@@ -85,9 +85,6 @@ EOD;
 
 $generator->parseSchema($sources['schema'] . 'commerce_digitalproduct.mysql.schema.xml', $sources['model']);
 
-$manager->createObjectContainer('Digitalproduct');
-$manager->createObjectContainer('DigitalproductFile');
-
 $mtime= microtime();
 $mtime= explode(" ", $mtime);
 $mtime= $mtime[1] + $mtime[0];
