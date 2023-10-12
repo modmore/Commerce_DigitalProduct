@@ -131,11 +131,9 @@ $modulePath = $componentPath . '/core/components/commerce_digitalproduct/src/Mod
 $commerce->loadModulesFromDirectory($modulePath, 'modmore\\Commerce_DigitalProduct\\Modules\\', $modulePath);
 
 $modx->addPackage('commerce_digitalproduct', $componentPath . '/core/components/commerce_digitalproduct/model/');
-
 $manager = $modx->getManager();
 $manager->createObjectContainer('Digitalproduct');
 $manager->createObjectContainer('DigitalproductFile');
-$manager->createObjectContainer('DigitalProductBundleData');
 
 // Clear the cache
 $modx->cacheManager->refresh();
