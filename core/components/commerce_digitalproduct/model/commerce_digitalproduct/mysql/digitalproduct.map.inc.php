@@ -46,7 +46,7 @@ $xpdo_meta_map['Digitalproduct']= array (
       'null' => false,
       'default' => 0,
     ),
-    'bundle' =>
+    'bundle' => 
     array (
       'dbtype' => 'int',
       'attributes' => 'unsigned',

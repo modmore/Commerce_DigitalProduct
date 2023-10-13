@@ -11,6 +11,10 @@ $_lang['commerce.DigitalproductOrderShipment'] = 'Digital Shipment';
 $_lang['commerce.DigitalproductProduct'] = 'Digital Product';
 $_lang['commerce.add_DigitalproductProduct'] = 'Add Digital Product';
 
+// Bundle
+$_lang['commerce.DigitalProductBundle'] = 'Digital Product Bundle';
+$_lang['commerce.add_DigitalProductBundle'] = 'Add Digital Product Bundle';
+
 // Tabs
 $_lang['commerce_digitalproduct.product_tab'] = 'Digital';
 
@@ -33,6 +37,12 @@ $_lang['commerce_digitalproduct.files_desc'] = 'Files that may be sold as a down
 
 $_lang['commerce_digitalproduct.resource_display_name'] = 'Display Name (shows to customer)';
 $_lang['commerce_digitalproduct.url'] = 'URL to File';
+
+$_lang['commerce_digitalproduct.primary_delivery_type'] = 'Primary Delivery Type';
+$_lang['commerce_digitalproduct.secondary_delivery_type'] = 'Secondary Delivery Type (Optional)';
+$_lang['commerce_digitalproduct.primary_delivery_type.field_desc'] = '<b>Required:</b> If there are both physical and digital products in the bundle, set the physical delivery type here. If not, set the digital delivery type.';
+$_lang['commerce_digitalproduct.secondary_delivery_type.field_desc'] = '<b>Optional:</b> If the primary delivery type is physical, set the digital delivery type here.';
+$_lang['commerce_digitalproduct.no_secondary_delivery_type'] = 'No secondary delivery type';
 
 // Frontend
 $_lang['commerce_digitalproduct.pages'] = 'Pages';
