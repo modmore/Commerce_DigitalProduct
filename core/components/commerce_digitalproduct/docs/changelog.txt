@@ -1,3 +1,9 @@
+DigitalProduct for Commerce 2.1.2-pl
+------------------------------------
+Released on 2025-11-03
+
+- Fix potential error when an order contains non-product items [S58346]
+
 DigitalProduct for Commerce 2.1.1-pl
 ------------------------------------
 Released on 2023-10-05

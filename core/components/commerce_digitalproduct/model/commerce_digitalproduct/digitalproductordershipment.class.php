@@ -129,20 +129,20 @@ class DigitalproductOrderShipment extends comOrderShipment
                 continue;
             }
 
-            $product = $orderItem->getProduct();
-
-            // Check if this product is a bundle
-            if ($product->get('class_key') === 'comProductBundle') {
-                $bundleProducts = $product->getProducts();
-                // Treat each product that's part of the bundle as a separate digital product
-                foreach ($bundleProducts as $bundleProduct) {
-                    $output[] = $this->processDigitalProduct($bundleProduct, $order, $user);
+            if ($product = $orderItem->getProduct()) {
+                // Check if this product is a bundle
+                if ($product->get('class_key') === 'comProductBundle') {
+                    $bundleProducts = $product->getProducts();
+                    // Treat each product that's part of the bundle as a separate digital product
+                    foreach ($bundleProducts as $bundleProduct) {
+                        $output[] = $this->processDigitalProduct($bundleProduct, $order, $user);
+                    }
+                    continue;
                 }
-                continue;
-            }
 
-            // Process non-bundle products
-            $output[] = $this->processDigitalProduct($product, $order, $user);
+                // Process non-bundle products
+                $output[] = $this->processDigitalProduct($product, $order, $user);
+            }
         }
 
         return $output;
